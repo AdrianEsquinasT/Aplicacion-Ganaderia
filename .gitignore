@@ -12,3 +12,4 @@ coverage/
 # Datos reales o exportaciones: nunca al repositorio
 backups/
 *.backup.json
+*.tsbuildinfo
