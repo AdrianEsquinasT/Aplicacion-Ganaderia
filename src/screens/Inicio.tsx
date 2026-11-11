@@ -113,6 +113,8 @@ export default function Inicio({ i }: { i: Index }) {
         <button className="btn soft wide" onClick={() => go('animales')}>Ver los {lista.length} animales <I.Chevron size={14} /></button>
       </section>
 
+      <div className="dash-main">
+      <div className="dash-row r1">
       <section className="card d-feat">
         <div className="photo"><Avatar i={i} a={a} size={230} /><button className="cam" aria-label="Añadir fotografía" onClick={() => setModal('foto')}><I.Camera size={18} /></button></div>
         <div className="facts">
@@ -142,6 +144,8 @@ export default function Inicio({ i }: { i: Index }) {
         {acciones.map((x) => <button key={x.t} onClick={x.fn}><span className="ico"><x.ic size={18} /></span>{x.t}</button>)}
       </section>
 
+      </div>
+      <div className="dash-row r2">
       <section className="card d-repro">
         <h3><I.Heart size={22} /> Reproducción {estado && <span className={`pill ${estado === 'Gestante' ? 'ok' : ''}`}>{estado}</span>}</h3>
         {esVaca ? (
@@ -172,9 +176,11 @@ export default function Inicio({ i }: { i: Index }) {
         <div className="head"><h3><I.Scale size={22} /> Peso</h3><button className="btn soft" onClick={() => setModal('peso')}><I.Plus size={14} /> Añadir peso</button></div>
         <p className="big">{peso ? `${peso.kg} kg` : '—'}</p>
         {peso && <p className="muted">Último pesaje: {fmtDate(peso.fecha)}</p>}
-        <LineChart width={250} height={150} series={[{ name: 'Peso', color: '#4f7a3a', points: pesos.map((p) => ({ x: Date.parse(p.fecha), y: p.kg })) }]} xFormat={dmy} yUnit="kg" empty="Aún no hay pesajes." />
+        <LineChart width={300} height={130} series={[{ name: 'Peso', color: '#4f7a3a', points: pesos.map((p) => ({ x: Date.parse(p.fecha), y: p.kg })) }]} xFormat={dmy} yUnit="kg" empty="Aún no hay pesajes." />
       </section>
 
+      </div>
+      <div className="dash-row r3">
       <section className="card d-gen">
         <div className="head"><h3><I.Tree size={22} /> Genealogía</h3><button className="btn soft" onClick={() => go('genealogia', a.id)}>Ver árbol completo <I.Chevron size={14} /></button></div>
         <Pedigree i={i} root={L.nodoAnimal(i, a)} generations={3} compact />
@@ -199,6 +205,8 @@ export default function Inicio({ i }: { i: Index }) {
         {san.length === 0 ? <Empty>Sin registros.</Empty> : <ul className="log">{san.map((s) => <li key={s.id}><span>{fmtDate(s.fecha)}</span><div>{s.tipo}{s.producto ? ` · ${s.producto}` : s.obs ? ` – ${s.obs}` : ''}</div></li>)}</ul>}
       </section>
 
+      </div>
+      <div className="dash-row r4">
       <section className="card d-avisos">
         <div className="head"><h3><I.Bell size={22} /> Avisos</h3>{av.length > 0 && <span className="badge">{av.length}</span>}</div>
         {av.length === 0 ? <small className="muted">Todo al día.</small> : (
@@ -208,6 +216,9 @@ export default function Inicio({ i }: { i: Index }) {
         )}
         <button className="btn wide gold" onClick={() => go('sanidad')}>Ver todos los avisos <I.Chevron size={14} /></button>
       </section>
+
+      </div>
+      </div>
 
       {modal === 'peso' && <PesoForm i={i} animal={a} onClose={() => setModal(null)} />}
       {modal === 'ciclo' && <CicloForm i={i} vaca={a} onClose={() => setModal(null)} />}
