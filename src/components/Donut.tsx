@@ -9,7 +9,7 @@ export default function Donut({ breed }: { breed: BreedShare[] }) {
   const main = breed[0]
   return (
     <div className="donut">
-      <svg viewBox="0 0 120 120" width="130" height="130" role="img" aria-label="Composición racial">
+      <svg viewBox="0 0 120 120" style={{ width: "9.3rem", height: "9.3rem" }} role="img" aria-label="Composición racial">
         <circle cx="60" cy="60" r={r} fill="none" stroke="#e6dcc3" strokeWidth="12" />
         {breed.map((b, k) => {
           const len = (b.pct / 100) * c

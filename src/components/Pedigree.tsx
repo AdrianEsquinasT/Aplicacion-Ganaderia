@@ -39,7 +39,7 @@ function Branch({ n, depth, i, role }: { n: PNode; depth: number; i: Index; role
 export default function Pedigree({ i, root, generations = 3, compact }: { i: Index; root: PNode; generations?: number; compact?: boolean }) {
   return (
     <div className="pedigree-scroll">
-      <div className={`pedigree ${compact ? 'compact' : ''}`} style={{ minWidth: `${Math.pow(2, generations - 1) * (compact ? 84 : 118)}px` }}>
+      <div className={`pedigree ${compact ? 'compact' : ''}`} style={{ minWidth: `${Math.pow(2, generations - 1) * (compact ? 6 : 8.4)}rem` }}>
         <Branch n={root} depth={generations - 1} i={i} />
       </div>
     </div>

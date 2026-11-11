@@ -105,7 +105,7 @@ export function Lotes({ i }: { i: Index }) {
       <section className="card">
         <div className="head"><h2>Lotes</h2><button className="btn primary" onClick={() => setEdit('nuevo')}><I.Plus size={14} /> Nuevo lote</button></div>
         <p className="muted">Cada animal puede pertenecer a un lote (se asigna en «Editar animal»).</p>
-        <table className="tbl">
+        <div className="table-wrap"><table className="tbl">
           <thead><tr><th>Lote</th><th>Animales</th><th></th></tr></thead>
           <tbody>
             {i.state.lotes.map((l) => {
@@ -119,7 +119,7 @@ export function Lotes({ i }: { i: Index }) {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </section>
       {edit && <LoteForm lote={edit === 'nuevo' ? undefined : edit} onClose={() => setEdit(null)} />}
       <Toast />

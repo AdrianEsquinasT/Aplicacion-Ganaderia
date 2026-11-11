@@ -78,7 +78,7 @@ export function FormActions({ onCancel, label = 'Guardar', extra }: { onCancel: 
 
 export function Avatar({ i, a, size = 52, round }: { i: Index; a: Animal; size?: number; round?: boolean }) {
   const f = fotoAnimal(i, a)
-  const st = { width: size, height: size, borderRadius: round ? '50%' : 10 }
+  const st = { width: `${size / 14}rem`, height: `${size / 14}rem`, borderRadius: round ? '50%' : '0.7rem' }
   if (f) return <img className="avatar" style={st} src={f} alt={a.name || a.crotal} />
   return (
     <span className={`avatar ph ${a.sex === 'M' ? 'male' : ''}`} style={st}>

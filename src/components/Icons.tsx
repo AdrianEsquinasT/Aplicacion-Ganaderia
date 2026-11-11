@@ -10,8 +10,8 @@ const wrap =
   ({ size = 20, className }: P) => (
     <svg
       className={className}
-      width={size}
-      height={size}
+      width={`${size / 14}rem`}
+      height={`${size / 14}rem`}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -82,20 +82,20 @@ export const Pin = wrap(
 )
 export const Pulse = wrap(<path d="M3 12h4l3-7 4 14 3-7h4" />)
 export const Star = ({ size = 20 }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="#e8a817" aria-hidden="true">
+  <svg width={`${size / 14}rem`} height={`${size / 14}rem`} viewBox="0 0 24 24" fill="#e8a817" aria-hidden="true">
     <path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.5 5.7 21l1.5-7L2 9.3l7-.8L12 2z" />
   </svg>
 )
 
 // Silueta simple de vaca (lateral)
 export const Cow = ({ size = 24, className }: P) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 48 32" fill="currentColor" aria-hidden="true">
+  <svg className={className} width={`${size / 14}rem`} height={`${size / 14}rem`} viewBox="0 0 48 32" fill="currentColor" aria-hidden="true">
     <path d="M4 10c0-2 1-3 3-3h2l1-3 2 3h3c2-2 6-3 10-3h8c4 0 7 2 8 5l2 3c1 1 1 2 0 3l-2 1v9h-3v-8h-3v8h-3v-8H20v8h-3v-8h-3v8h-3v-9c-3 0-6-1-7-3-1-1-1-2-1-3z" />
     <circle cx="9" cy="9" r="1" fill="#f6efe0" />
   </svg>
 )
 export const CowOutline = ({ size = 80 }: P) => (
-  <svg width={size} height={size * 0.66} viewBox="0 0 48 32" fill="none" stroke="#f6efe0" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+  <svg width={`${size / 14}rem`} height={`${(size * 0.66) / 14}rem`} viewBox="0 0 48 32" fill="none" stroke="#f6efe0" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
     <path d="M4 10c0-2 1-3 3-3h2l1-3 2 3h3c2-2 6-3 10-3h8c4 0 7 2 8 5l2 3c1 1 1 2 0 3l-2 1v9h-3v-8h-3v8h-3v-8H20v8h-3v-8h-3v8h-3v-9c-3 0-6-1-7-3-1-1-1-2-1-3z" />
   </svg>
 )

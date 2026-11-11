@@ -158,11 +158,11 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
           <LineChart series={[{ name: 'Peso', color: '#4f7a3a', points: pesos.map((p) => ({ x: Date.parse(p.fecha), y: p.kg })) }]} xFormat={dmy} yUnit="kg" empty="Aún no hay pesajes registrados." />
           {pesos.length > 0 && (
             <details className="more"><summary>Historial de pesajes ({pesos.length})</summary>
-              <table className="tbl"><thead><tr><th>Fecha</th><th>Peso</th><th>Edad</th><th>Tipo</th><th></th></tr></thead><tbody>
+              <div className="table-wrap"><table className="tbl"><thead><tr><th>Fecha</th><th>Peso</th><th>Edad</th><th>Tipo</th><th></th></tr></thead><tbody>
                 {[...pesos].reverse().map((p) => (
                   <tr key={p.id}><td>{fmtDate(p.fecha)}</td><td>{p.kg} kg</td><td>{ageLabel(a.birth, p.fecha)}</td><td>{p.tipo}{p.obs ? ` · ${p.obs}` : ''}</td><td><button className="x" aria-label="Eliminar pesaje" onClick={() => confirm('¿Eliminar este pesaje?') && A.deletePesaje(p.id)}>×</button></td></tr>
                 ))}
-              </tbody></table>
+              </tbody></table></div>
             </details>
           )}
         </Card>
@@ -198,14 +198,14 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
                   <button className="btn ghost danger" onClick={() => confirm(`¿Eliminar "${ciclo.label}"?`) && (A.deleteCiclo(ciclo.id), setCicloSel(undefined))}>Eliminar</button>
                 </div>
                 <details className="more"><summary>Historial reproductivo ({ciclos.length} ciclos)</summary>
-                  <table className="tbl"><thead><tr><th>Ciclo</th><th>Método</th><th>Fecha</th><th>Semental / toro</th><th>Resultado</th></tr></thead><tbody>
+                  <div className="table-wrap"><table className="tbl"><thead><tr><th>Ciclo</th><th>Método</th><th>Fecha</th><th>Semental / toro</th><th>Resultado</th></tr></thead><tbody>
                     {[...ciclos].reverse().map((c) => (
                       <tr key={c.id} className="click" onClick={() => setCicloSel(c.id)}>
                         <td>{c.label}</td><td>{c.metodo === 'Monta natural' ? 'Monta' : 'IA'}</td><td>{fmtDate(c.ia?.fecha ?? c.monta?.entrada)}</td>
                         <td>{c.ia?.sementalId ? i.semental.get(c.ia.sementalId)?.name : c.monta?.toroId ? i.animal.get(c.monta.toroId)?.name : '—'}</td><td>{L.resultadoCiclo(c)}</td>
                       </tr>
                     ))}
-                  </tbody></table>
+                  </tbody></table></div>
                 </details>
               </>
             ) : <Empty>Esta vaca aún no tiene ciclos reproductivos. Pulsa «Nueva» para registrar CIDR, retirada, prostaglandina, inseminación y diagnóstico.</Empty>}

@@ -25,3 +25,10 @@
 ## Pendiente
 - Definir entidades y modelo de datos (animales, razas, partos, sanidad, pesos, ventas...).
 - Definir pantallas y dashboard.
+
+## Diseño responsive
+- Unidades relativas (`rem`, `fr`, `%`, `clamp()`): el tamaño base del texto escala con la pantalla y con
+  el tamaño de letra que el usuario tenga configurado. Iconos, fotos y gráficos también escalan.
+- Las filas del panel se reparten solas (`flex-wrap`, `auto-fit`) y las cajas de una misma fila miden lo mismo.
+- Consultas de contenedor (`@container`): cada bloque se adapta al espacio que tiene, no al ancho de la ventana.
+- Un único cambio de modo por media query en `em` (menú lateral en ordenador, barra inferior en móvil).
