@@ -14,7 +14,13 @@ TypeScript · React (o Svelte) + Vite · PWA (`vite-plugin-pwa`) · IndexedDB (D
 Detalles y decisiones en [`docs/arquitectura.md`](docs/arquitectura.md).
 
 ## Estado
-Maqueta de la página de inicio (React + TypeScript + Vite) con **datos ficticios**: lista y filtro de animales, ficha con composición racial, reproducción y estrategia, gráfico de peso, genealogía, descendencia, sanidad y avisos. Permite añadir pesos, tratamientos, partos y estrategias (se guardan en el navegador). Las demás secciones están en preparación.
+Aplicación funcional con **datos ficticios** de ejemplo. Incluye: resumen de la ganadería, animales (fichas, edición, fotos, bajas, lotes),
+reproducción (estrategia CIDR → retirada → prostaglandina → inseminación → diagnóstico en línea temporal, historial de ciclos,
+monta natural como excepción), partos que crean el ternero y lo enlazan con madre y padre, catálogo de sementales,
+genealogía dinámica con descendencia, pesajes con gráfica, producción, sanidad con avisos, estadísticas y copia de seguridad.
+Los datos se guardan en el propio dispositivo (IndexedDB).
+
+Pendiente: instalación como PWA y funcionamiento sin conexión (service worker), pruebas en iPhone real y revisión de fórmulas con la ganadera.
 
 ## Ejecutar en local
 ```bash

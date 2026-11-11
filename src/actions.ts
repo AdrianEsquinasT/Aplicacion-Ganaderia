@@ -214,6 +214,14 @@ export const A = {
     if (!d || !Array.isArray(d.animals) || !d.config) throw new Error('El archivo no es una copia válida')
     await replaceState(d)
   },
+  async empezarVacio() {
+    const d = makeSeed()
+    await replaceState({
+      ...d,
+      animals: [], sementales: [], ciclos: [], partos: [], pesajes: [], sanidad: [], bajas: [], photos: [],
+      config: { ...d.config, nombre: 'Mi Ganadería', localizacion: '' },
+    })
+  },
   async restaurarDemo() {
     await replaceState(makeSeed())
   },

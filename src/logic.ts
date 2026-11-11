@@ -1,6 +1,6 @@
 // Todo lo que se CALCULA a partir de los datos registrados. Nada de esto se guarda.
 import type { Animal, BreedShare, Category, Ciclo, Parto, Pesaje, Photo, Ref, Sanidad, Semental, State, Baja, Lote } from './types'
-import { addDays, avg, clamp, daysBetween, monthsBetween, today, year } from './util'
+import { addDays, avg, clamp, daysBetween, fmtDate, monthsBetween, today, year } from './util'
 
 export interface Index {
   state: State
@@ -236,6 +236,7 @@ export interface IndiceInterno {
   detalle: string
 }
 const FAC: Record<string, number> = { Fácil: 10, Normal: 8, Difícil: 4, 'Muy difícil': 2 }
+export const facScore = (p: Parto): number => (p.tipo === 'Cesárea' ? 2 : (FAC[p.facilidad] ?? 8))
 
 function mediaHerd(i: Index, fn: (a: Animal) => number | undefined): number | undefined {
   return avg(i.state.animals.map(fn).filter((x): x is number => x !== undefined))
@@ -267,7 +268,7 @@ export function indicesInternos(i: Index, a: Animal): IndiceInterno[] {
     .filter((h) => h.dam === a.id)
     .map((h) => i.partoDeCria.get(h.id))
     .filter((p): p is Parto => !!p)
-    .map((p) => (p.tipo === 'Cesárea' ? 2 : (FAC[p.facilidad] ?? 8)))
+    .map(facScore)
   out.push({
     clave: 'facilidad',
     nombre: 'Facilidad de parto',
@@ -378,7 +379,7 @@ export function avisos(i: Index, ref = today()): Aviso[] {
       out.push({ tipo: 'decision', texto: `${etiqueta(i, a)}: decidir reposición o venta`, animalId: a.id })
     }
     for (const x of i.sanidad.get(a.id) ?? []) {
-      if (tratamientoActivo(x, ref)) out.push({ tipo: 'tratamiento', texto: `${etiqueta(i, a)}: tratamiento en curso (${x.producto ?? x.obs ?? 'sin detalle'}), termina ${finTratamiento(x)}`, animalId: a.id, fecha: finTratamiento(x) })
+      if (tratamientoActivo(x, ref)) out.push({ tipo: 'tratamiento', texto: `${etiqueta(i, a)}: tratamiento en curso (${x.producto ?? x.obs ?? 'sin detalle'}), termina el ${fmtDate(finTratamiento(x))}`, animalId: a.id, fecha: finTratamiento(x) })
       if ((x.tipo === 'Enfermedad' || x.tipo === 'Incidencia') && daysBetween(x.fecha, ref) <= 30 && daysBetween(x.fecha, ref) >= 0) {
         out.push({ tipo: 'incidencia', texto: `${etiqueta(i, a)}: ${x.tipo.toLowerCase()} (${x.obs ?? x.producto ?? 'sin detalle'})`, animalId: a.id, fecha: x.fecha })
       }
@@ -444,13 +445,14 @@ export function crias(i: Index, f: FiltroProd = {}): Animal[] {
   })
 }
 
+/** Ganancia diaria (g/día) entre los dos últimos pesajes. */
 export function gananciaDiaria(i: Index, id: string): number | undefined {
   const l = i.pesajes.get(id)
   if (!l || l.length < 2) return undefined
-  const a = l[0]
+  const a = l[l.length - 2]
   const b = l[l.length - 1]
   const d = daysBetween(a.fecha, b.fecha)
-  return d > 0 ? ((b.kg - a.kg) / d) * 1000 : undefined // g/día
+  return d > 0 ? ((b.kg - a.kg) / d) * 1000 : undefined
 }
 
 export function statsProduccion(i: Index, f: FiltroProd = {}) {
@@ -581,4 +583,29 @@ export function historial(i: Index, a: Animal): Evento[] {
   const b = i.baja.get(a.id)
   if (b) ev.push({ fecha: b.fecha, tipo: 'Baja', texto: `Baja: ${b.motivo}${b.precio ? ' (' + b.precio + ' €)' : ''}` })
   return ev.sort((x, y) => x.fecha.localeCompare(y.fecha))
+}
+
+/** Resumen de la descendencia de un animal (padre o madre) o de un semental. */
+export function resumenDescendencia(i: Index, id: string) {
+  const hs = hijosDe(i, id)
+  const conParto = hs.filter((h) => i.partoDeCria.has(h.id))
+  const hijas = hs.filter((h) => h.sex === 'F')
+  const facHijas = hijas
+    .flatMap((h) => (i.hijos.get(h.id) ?? []).filter((c) => c.dam === h.id).map((c) => i.partoDeCria.get(c.id)))
+    .filter((p): p is Parto => !!p)
+    .map(facScore)
+  return {
+    total: hs.length,
+    machos: hs.filter((h) => h.sex === 'M').length,
+    hembras: hijas.length,
+    vivos: hs.filter((h) => !isBaja(i, h)).length,
+    reposicion: hs.filter((h) => h.destino === 'Reposición' && !isBaja(i, h)).length,
+    vendidos: hs.filter((h) => i.baja.get(h.id)?.motivo === 'Venta').length,
+    bajas: hs.filter((h) => isBaja(i, h)).length,
+    partos: conParto.length,
+    pesoNac: avg(hs.map((h) => pesoTipo(i, h.id, 'nacimiento')?.kg).filter((x): x is number => x !== undefined)),
+    pesoDestete: avg(hs.map((h) => pesoTipo(i, h.id, 'destete')?.kg).filter((x): x is number => x !== undefined)),
+    facilidadHijas: facHijas.length ? avg(facHijas) : undefined,
+    reproductores: hs.filter((h) => (h.sex === 'F' && partosTotal(i, h) > 0) || (h.sex === 'M' && categoria(i, h) === 'Toro' && !isBaja(i, h))).length,
+  }
 }
