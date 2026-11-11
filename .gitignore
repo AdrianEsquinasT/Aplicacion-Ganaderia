@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.vite/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+# Datos reales o exportaciones: nunca al repositorio
+backups/
+*.backup.json
