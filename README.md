@@ -14,7 +14,13 @@ TypeScript · React (o Svelte) + Vite · PWA (`vite-plugin-pwa`) · IndexedDB (D
 Detalles y decisiones en [`docs/arquitectura.md`](docs/arquitectura.md).
 
 ## Estado
-Fase inicial: definición de requisitos y modelo de datos. Aún sin código.
+Maqueta de la página de inicio (React + TypeScript + Vite) con **datos ficticios**: lista y filtro de animales, ficha con composición racial, reproducción y estrategia, gráfico de peso, genealogía, descendencia, sanidad y avisos. Permite añadir pesos, tratamientos, partos y estrategias (se guardan en el navegador). Las demás secciones están en preparación.
+
+## Ejecutar en local
+```bash
+npm install
+npm run dev
+```
 
 ## Nota sobre datos
 El repositorio no debe contener datos reales de la explotación. Las demos usarán datos ficticios.
