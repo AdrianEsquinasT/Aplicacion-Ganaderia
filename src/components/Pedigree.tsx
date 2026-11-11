@@ -36,10 +36,10 @@ function Branch({ n, depth, i, role }: { n: PNode; depth: number; i: Index; role
 }
 
 /** Árbol genealógico dinámico: se construye con los campos padre/madre de cada animal. */
-export default function Pedigree({ i, root, generations = 3 }: { i: Index; root: PNode; generations?: number }) {
+export default function Pedigree({ i, root, generations = 3, compact }: { i: Index; root: PNode; generations?: number; compact?: boolean }) {
   return (
     <div className="pedigree-scroll">
-      <div className="pedigree" style={{ minWidth: `${Math.pow(2, generations - 1) * 118}px` }}>
+      <div className={`pedigree ${compact ? 'compact' : ''}`} style={{ minWidth: `${Math.pow(2, generations - 1) * (compact ? 84 : 118)}px` }}>
         <Branch n={root} depth={generations - 1} i={i} />
       </div>
     </div>

@@ -13,10 +13,10 @@ function nice(min: number, max: number): [number, number] {
   return [Math.floor(min / step) * step, Math.ceil(max / step) * step]
 }
 
-export function LineChart({ series, xFormat, yUnit = '', height = 180, empty = 'Sin datos suficientes' }: { series: Serie[]; xFormat: (x: number) => string; yUnit?: string; height?: number; empty?: string }) {
+export function LineChart({ series, xFormat, yUnit = '', height = 180, width = 380, empty = 'Sin datos suficientes' }: { series: Serie[]; xFormat: (x: number) => string; yUnit?: string; height?: number; width?: number; empty?: string }) {
   const pts = series.flatMap((s) => s.points)
   if (!pts.length) return <p className="muted empty">{empty}</p>
-  const W = 380
+  const W = width
   const pad = { l: 40, r: 12, t: 10, b: 24 }
   const [y0, y1] = nice(Math.min(...pts.map((p) => p.y)), Math.max(...pts.map((p) => p.y)))
   const xs = pts.map((p) => p.x)

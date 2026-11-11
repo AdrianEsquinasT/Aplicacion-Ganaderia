@@ -20,7 +20,7 @@ const dmy = (iso: number) => {
   return `${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCFullYear()).slice(2)}`
 }
 
-function FotoSheet({ i, animal, onClose }: { i: Index; animal: Animal; onClose: () => void }) {
+export function FotoSheet({ i, animal, onClose }: { i: Index; animal: Animal; onClose: () => void }) {
   const [data, setData] = useState<string>()
   const [tipo, setTipo] = useState<TipoFoto>('adicional')
   const [principal, setPrincipal] = useState(!animal.mainPhotoId)

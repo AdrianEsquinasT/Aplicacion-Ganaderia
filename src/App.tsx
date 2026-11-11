@@ -9,7 +9,9 @@ import Catalogo from './screens/Catalogo'
 import Config from './screens/Config'
 import Estadisticas from './screens/Estadisticas'
 import Genealogia from './screens/Genealogia'
-import Inicio from './screens/Inicio'
+import Inicio, { HeroStats } from './screens/Inicio'
+import Resumen from './screens/Resumen'
+import * as L from './logic'
 import Produccion from './screens/Produccion'
 import Reproduccion from './screens/Reproduccion'
 import Sanidad from './screens/Sanidad'
@@ -17,6 +19,7 @@ import { initStore, useIndex } from './store'
 
 const NAV: { s: Screen; label: string; icon: (p: { size?: number }) => JSX.Element }[] = [
   { s: 'inicio', label: 'Mi Ganadería', icon: I.Home },
+  { s: 'resumen', label: 'Mi Resumen', icon: I.Pulse },
   { s: 'animales', label: 'Mis Animales', icon: I.Cow },
   { s: 'reproduccion', label: 'Reproducción', icon: I.Heart },
   { s: 'catalogo', label: 'Catálogo de Sementales', icon: I.Book },
@@ -26,14 +29,15 @@ const NAV: { s: Screen; label: string; icon: (p: { size?: number }) => JSX.Eleme
   { s: 'estadisticas', label: 'Estadísticas', icon: I.Pie },
   { s: 'config', label: 'Configuración', icon: I.Gear },
 ]
-const BOTTOM: { s: Screen; label: string; icon: (p: { size?: number }) => JSX.Element }[] = [
+const BOTTOM: { s: Screen; label: string; short?: string; icon: (p: { size?: number }) => JSX.Element }[] = [
   { s: 'inicio', label: 'Inicio', icon: I.Home },
+  { s: 'resumen', label: 'Resumen', icon: I.Pulse },
   { s: 'animales', label: 'Animales', icon: I.Cow },
-  { s: 'reproduccion', label: 'Reproducción', icon: I.Heart },
-  { s: 'genealogia', label: 'Genealogía', icon: I.Tree },
-  { s: 'produccion', label: 'Producción', icon: I.Scale },
+  { s: 'reproduccion', label: 'Reproducción', short: 'Repro.', icon: I.Heart },
+  { s: 'genealogia', label: 'Genealogía', short: 'Árbol', icon: I.Tree },
+  { s: 'produccion', label: 'Producción', short: 'Pesos', icon: I.Scale },
   { s: 'sanidad', label: 'Sanidad', icon: I.Cross },
-  { s: 'estadisticas', label: 'Estadísticas', icon: I.Pie },
+  { s: 'estadisticas', label: 'Estadísticas', short: 'Datos', icon: I.Pie },
 ]
 const grupo = (s: Screen): Screen => (s === 'lotes' || s === 'bajas' ? 'animales' : s)
 
@@ -43,6 +47,7 @@ function Shell() {
   const cfg = i.state.config
   const logo = fotoAnimal(i, { mainPhotoId: cfg.logoPhotoId })
   const act = grupo(r.screen)
+  const nAvisos = L.avisos(i).length
 
   return (
     <div className="app">
@@ -66,13 +71,16 @@ function Shell() {
             <h1>{r.screen === 'inicio' ? cfg.nombre.toUpperCase() : NAV.find((n) => n.s === act)?.label}</h1>
             <p>{r.screen === 'inicio' ? `Explotación de vacuno${cfg.localizacion ? ' · ' + cfg.localizacion : ''}` : cfg.nombre}</p>
           </div>
+          {r.screen === 'inicio' && <HeroStats i={i} />}
           <div className="hero-icons">
+            <button aria-label={`Avisos (${nAvisos})`} onClick={() => go('sanidad')}><I.Bell size={22} />{nAvisos > 0 && <i className="dot">{nAvisos > 9 ? '9+' : nAvisos}</i>}</button>
             <button aria-label="Configuración" onClick={() => go('config')}><I.Gear size={22} /></button>
           </div>
         </header>
 
         <>
             {r.screen === 'inicio' && <Inicio i={i} />}
+            {r.screen === 'resumen' && <Resumen i={i} />}
             {r.screen === 'animales' && <Animales i={i} id={r.id} />}
             {r.screen === 'lotes' && <Lotes i={i} />}
             {r.screen === 'bajas' && <Bajas i={i} />}
@@ -88,7 +96,7 @@ function Shell() {
 
       <nav className="bottom" aria-label="Navegación principal">
         {BOTTOM.map((b) => (
-          <button key={b.s} className={act === b.s ? 'on' : ''} onClick={() => go(b.s)}><b.icon size={22} /><span>{b.label}</span></button>
+          <button key={b.s} className={act === b.s ? 'on' : ''} onClick={() => go(b.s)}><b.icon size={22} /><span className="l-full">{b.label}</span><span className="l-short">{b.short ?? b.label}</span></button>
         ))}
       </nav>
       <Toast />

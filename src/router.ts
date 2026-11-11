@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-export type Screen = 'inicio' | 'animales' | 'lotes' | 'bajas' | 'reproduccion' | 'catalogo' | 'genealogia' | 'produccion' | 'sanidad' | 'estadisticas' | 'config'
-const SCREENS: Screen[] = ['inicio', 'animales', 'lotes', 'bajas', 'reproduccion', 'catalogo', 'genealogia', 'produccion', 'sanidad', 'estadisticas', 'config']
+export type Screen = 'inicio' | 'resumen' | 'animales' | 'lotes' | 'bajas' | 'reproduccion' | 'catalogo' | 'genealogia' | 'produccion' | 'sanidad' | 'estadisticas' | 'config'
+const SCREENS: Screen[] = ['inicio', 'resumen', 'animales', 'lotes', 'bajas', 'reproduccion', 'catalogo', 'genealogia', 'produccion', 'sanidad', 'estadisticas', 'config']
 
 export interface Route {
   screen: Screen
