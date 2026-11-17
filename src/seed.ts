@@ -1,5 +1,8 @@
 // DATOS FICTICIOS para probar la aplicación. No son datos reales de ninguna explotación.
-import type { Animal, Baja, Ciclo, Facilidad, Lote, Parto, Pesaje, Sanidad, Semental, State, TipoParto } from './types'
+import type { Animal, Baja, Ciclo, Facilidad, Lote, Parto, Pesaje, Photo, Sanidad, Semental, State, TipoParto } from './types'
+
+// Ilustraciones de ejemplo (public/demo/animales, generadas con scripts/ilustraciones.py)
+const ilustracion = (nombre: string) => `${import.meta.env.BASE_URL}demo/animales/${nombre}.svg`
 
 const L = {
   repro: 'l-repro', secas: 'l-secas', gest: 'l-gest', nov: 'l-nov', toros: 'l-toros',
@@ -19,14 +22,14 @@ export function makeSeed(): State {
     { id: L.venta, name: 'Venta' },
   ]
 
-  const sementales: Semental[] = [
+  const sementalesBase: Semental[] = [
     { id: 's-rumba', name: 'Rumba', officialId: 'CAT-LIM-0001', breed: 'Limusina', procedencia: 'Catálogo de sementales (ejemplo)', caracteristicas: 'Facilidad de parto alta, buen crecimiento', genetica: 'Datos del catálogo (ficticios)', sireName: 'Semental A (ejemplo)', damName: 'Vaca A (ejemplo)' },
     { id: 's-forro', name: 'Forro', officialId: 'CAT-LIM-0002', breed: 'Limusina', procedencia: 'Catálogo de sementales (ejemplo)', caracteristicas: 'Buena conformación cárnica', genetica: 'Datos del catálogo (ficticios)' },
     { id: 's-galan', name: 'Galán', officialId: 'CAT-LIM-0003', breed: 'Limusina', procedencia: 'Catálogo de sementales (ejemplo)', caracteristicas: 'Temperamento tranquilo, aptitud materna', genetica: 'Datos del catálogo (ficticios)' },
   ]
 
   const base = { breed: 'Limusina', explotacion: 'Mi Ganadería' }
-  const animals: Animal[] = [
+  const animalesBase: Animal[] = [
     { ...base, id: 'a-v051', crotal: 'ES123456789051', num: '051', name: 'Gitana', sex: 'F', birth: '2010-02-01', partosPrevios: 6 },
     { ...base, id: 'a-t041', crotal: 'ES123456789041', num: '041', name: 'Cierzo', sex: 'M', birth: '2014-03-10', entryDate: '2015-06-01' },
     { ...base, id: 'a-v087', crotal: 'ES123456789087', num: '087', name: 'Lulú', sex: 'F', birth: '2016-04-02', sire: { kind: 'animal', id: 'a-t041' }, dam: 'a-v051', loteId: L.gest, condition: 3 },
@@ -44,6 +47,20 @@ export function makeSeed(): State {
     { ...base, id: 'a-gala', crotal: 'ES123456789233', num: '233', name: 'Gala', sex: 'F', birth: '2023-03-08', sire: { kind: 'semental', id: 's-galan' }, dam: 'a-v087' },
     { ...base, id: 'a-estrella', crotal: 'ES123456789118', num: '118', name: 'Estrella', sex: 'F', birth: '2024-03-12', sire: { kind: 'semental', id: 's-forro' }, dam: 'a-v087', destino: 'Reposición', loteId: L.nov, condition: 3 },
   ]
+
+  // fotografía de perfil de cada animal y semental (ilustraciones de ejemplo)
+  const photos: Photo[] = []
+  const animals: Animal[] = animalesBase.map((a) => {
+    const f: Photo = { id: 'ph-' + a.id, ownerId: a.id, tipo: 'perfil', data: ilustracion(a.id) }
+    photos.push(f)
+    return { ...a, mainPhotoId: f.id }
+  })
+  photos.push({ id: 'ph-a-v125-b', ownerId: 'a-v125', tipo: 'adicional', data: ilustracion('a-v125-b') })
+  const sementales: Semental[] = sementalesBase.map((x) => {
+    const f: Photo = { id: 'ph-' + x.id, ownerId: x.id, tipo: 'principal', data: ilustracion(x.id) }
+    photos.push(f)
+    return { ...x, photoId: f.id }
+  })
 
   const cria = (calfId: string, tipo: TipoParto, facilidad: Facilidad, cicloId?: string): Parto => ({ id: 'p-' + calfId, calfId, tipo, facilidad, cicloId, estadoMadre: 'Buena', estadoCria: 'Vivo' })
   const partos: Parto[] = [
@@ -119,7 +136,7 @@ export function makeSeed(): State {
     sanidad,
     lotes,
     bajas,
-    photos: [],
+    photos,
     config: {
       id: 'config',
       nombre: 'Mi Ganadería',

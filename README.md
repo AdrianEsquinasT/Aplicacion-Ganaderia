@@ -22,6 +22,11 @@ Los datos se guardan en el propio dispositivo (IndexedDB).
 
 Pendiente: instalación como PWA y funcionamiento sin conexión (service worker), pruebas en iPhone real y revisión de fórmulas con la ganadera.
 
+## Imágenes de ejemplo
+Los animales y sementales de ejemplo llevan ilustraciones originales de perfil (20 en `public/demo/animales/`),
+generadas con `python3 scripts/ilustraciones.py`. No son fotografías ni proceden de terceros, así que no hay problemas
+de licencia. Las fotos reales de la ganadera se suben desde la propia aplicación y se guardan en el dispositivo.
+
 ## Ejecutar en local
 ```bash
 npm install
