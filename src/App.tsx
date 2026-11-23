@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as I from './components/Icons'
-import { Toast } from './components/ui'
+import { Sheet, Toast } from './components/ui'
 import { fotoAnimal } from './logic'
 import { go, useRoute } from './router'
 import type { Screen } from './router'
@@ -42,10 +42,12 @@ const BOTTOM: { s: Screen; label: string; short?: string; icon: (p: { size?: num
   { s: 'sanidad', label: 'Sanidad', icon: I.Cross },
   { s: 'estadisticas', label: 'Estadísticas', short: 'Datos', icon: I.Pie },
 ]
+const PRIMARY: Screen[] = ['inicio', 'animales', 'reproduccion', 'ubicaciones']
 const LOGO = `${import.meta.env.BASE_URL}logo.svg`
 const grupo = (s: Screen): Screen => (s === 'lotes' || s === 'bajas' ? 'animales' : s)
 
 function Shell() {
+  const [menu, setMenu] = useState(false)
   const i = useIndex()
   const r = useRoute()
   const cfg = i.state.config
@@ -101,9 +103,17 @@ function Shell() {
 
       <nav className="bottom" aria-label="Navegación principal">
         {BOTTOM.map((b) => (
-          <button key={b.s} className={act === b.s ? 'on' : ''} onClick={() => go(b.s)}><b.icon size={22} /><span className="l-full">{b.label}</span><span className="l-short">{b.short ?? b.label}</span></button>
+          <button key={b.s} className={`${act === b.s ? 'on' : ''} ${PRIMARY.includes(b.s) ? '' : 'extra'}`} onClick={() => go(b.s)}><b.icon size={22} /><span className="l-full">{b.label}</span><span className="l-short">{b.short ?? b.label}</span></button>
         ))}
+        <button className={`mas ${PRIMARY.includes(act) ? '' : 'on'}`} onClick={() => setMenu(true)} aria-haspopup="dialog"><I.Menu size={22} /><span className="l-full">Más</span><span className="l-short">Más</span></button>
       </nav>
+      {menu && (
+        <Sheet title="Menú" sub={cfg.nombre} onClose={() => setMenu(false)}>
+          <div className="menu-grid">
+            {NAV.map((n) => <button key={n.s} className={act === n.s ? 'on' : ''} onClick={() => { setMenu(false); go(n.s) }}><n.icon size={24} />{n.label}</button>)}
+          </div>
+        </Sheet>
+      )}
       <Toast />
     </div>
   )

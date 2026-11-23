@@ -105,21 +105,23 @@ export function Lotes({ i }: { i: Index }) {
       <section className="card">
         <div className="head"><h2>Lotes</h2><button className="btn primary" onClick={() => setEdit('nuevo')}><I.Plus size={14} /> Nuevo lote</button></div>
         <p className="muted">Cada animal puede pertenecer a un lote (se asigna en «Editar animal»).</p>
-        <div className="table-wrap"><table className="tbl">
-          <thead><tr><th>Lote</th><th>Animales</th><th></th></tr></thead>
-          <tbody>
-            {i.state.lotes.map((l) => {
-              const an = L.activos(i).filter((a) => a.loteId === l.id)
-              return (
-                <tr key={l.id}>
-                  <td><b>{l.name}</b></td>
-                  <td>{an.length === 0 ? '—' : an.map((a) => <button key={a.id} className="link" onClick={() => verAnimal(a.id)}>{L.etiqueta(i, a)}</button>)}</td>
-                  <td className="nowrap"><button className="btn soft" onClick={() => setEdit(l)}>Renombrar</button> <button className="x" aria-label="Eliminar lote" onClick={() => confirm(`¿Eliminar el lote "${l.name}"? Los animales quedarán sin lote.`) && A.deleteLote(l.id)}>×</button></td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table></div>
+        <ul className="lote-list">
+          {i.state.lotes.map((l) => {
+            const an = L.activos(i).filter((a) => a.loteId === l.id)
+            return (
+              <li key={l.id}>
+                <div className="lote-head">
+                  <span className="lote-name"><b>{l.name}</b><span className="muted">{an.length === 1 ? '1 animal' : `${an.length} animales`}</span></span>
+                  <span className="lote-actions">
+                    <button className="btn soft" onClick={() => setEdit(l)}>Renombrar</button>
+                    <button className="x" aria-label={`Eliminar el lote ${l.name}`} onClick={() => confirm(`¿Eliminar el lote "${l.name}"? Los animales quedarán sin lote.`) && A.deleteLote(l.id)}>×</button>
+                  </span>
+                </div>
+                {an.length > 0 && <div className="lote-animals">{an.map((a) => <button key={a.id} className="chip-link" onClick={() => verAnimal(a.id)}>{L.etiqueta(i, a)}</button>)}</div>}
+              </li>
+            )
+          })}
+        </ul>
       </section>
       {edit && <LoteForm lote={edit === 'nuevo' ? undefined : edit} onClose={() => setEdit(null)} />}
       <Toast />
