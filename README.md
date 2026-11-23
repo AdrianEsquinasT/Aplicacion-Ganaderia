@@ -1,3 +1,5 @@
+<p align="center"><img src="public/logo.svg" alt="Logotipo de Mi Ganadería" width="120" /></p>
+
 # Aplicación Ganadería
 
 Aplicación privada para la gestión visual de una explotación ganadera: registro de animales (vacas, toros, terneros), razas, y panel con gráficos y dashboard, en vez de una base de datos "fría".

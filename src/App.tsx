@@ -42,6 +42,7 @@ const BOTTOM: { s: Screen; label: string; short?: string; icon: (p: { size?: num
   { s: 'sanidad', label: 'Sanidad', icon: I.Cross },
   { s: 'estadisticas', label: 'Estadísticas', short: 'Datos', icon: I.Pie },
 ]
+const LOGO = `${import.meta.env.BASE_URL}logo.svg`
 const grupo = (s: Screen): Screen => (s === 'lotes' || s === 'bajas' ? 'animales' : s)
 
 function Shell() {
@@ -56,7 +57,7 @@ function Shell() {
     <div className="app">
       <aside className="sidebar">
         <div className="brand">
-          {logo ? <img src={logo} alt="" /> : <I.CowOutline size={96} />}
+          <img className={logo ? '' : 'logo-app'} src={logo ?? LOGO} alt="Logotipo" />
           <strong>{cfg.nombre}</strong>
           <span>{cfg.localizacion}</span>
         </div>
@@ -71,7 +72,7 @@ function Shell() {
       <main className="main">
         <header className="hero">
           <div>
-            <h1>{r.screen === 'inicio' ? cfg.nombre.toUpperCase() : NAV.find((n) => n.s === act)?.label}</h1>
+            <h1><img className="hero-logo" src={logo ?? LOGO} alt="" />{r.screen === 'inicio' ? cfg.nombre.toUpperCase() : NAV.find((n) => n.s === act)?.label}</h1>
             <p>{r.screen === 'inicio' ? `Explotación de vacuno${cfg.localizacion ? ' · ' + cfg.localizacion : ''}` : cfg.nombre}</p>
           </div>
           {r.screen === 'inicio' && <HeroStats i={i} />}
@@ -113,6 +114,6 @@ export default function App() {
   useEffect(() => {
     void initStore().then(() => setListo(true))
   }, [])
-  if (!listo) return <div className="loading">Cargando…</div>
+  if (!listo) return <div className="loading"><img src={LOGO} alt="" />Cargando…</div>
   return <Shell />
 }

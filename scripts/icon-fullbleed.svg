@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mi Ganadería">
+  <title>Mi Ganadería</title>
+  <rect width="512" height="512" rx="0" fill="#363b1b"/>
+  <g clip-path="url(#recorte)">
+  <defs><clipPath id="recorte"><rect width="512" height="512" rx="0"/></clipPath></defs>
+  <rect width="512" height="512" fill="url(#fondo)"/>
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#58602b"/><stop offset="1" stop-color="#363b1b"/></linearGradient>
+    <linearGradient id="pelo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3b074"/><stop offset=".65" stop-color="#d4975a"/><stop offset="1" stop-color="#bd7a40"/></linearGradient>
+    <linearGradient id="cuerno" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e9dcb8"/><stop offset="1" stop-color="#fbf4de"/></linearGradient>
+  </defs>
+  <!-- colinas -->
+  <path d="M0 452 C 110 408 215 432 256 446 C 330 470 420 414 512 440 L512 512 L0 512 Z" fill="#79a24b"/>
+  <path d="M0 478 C 130 446 230 470 300 480 C 380 492 450 462 512 472 L512 512 L0 512 Z" fill="#5c8a37"/>
+  <!-- brote entre los cuernos -->
+  <path d="M256 150 C 256 128 256 112 256 96" stroke="#6f9a43" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M256 112 C 226 112 204 92 202 62 C 232 62 254 82 256 112 Z" fill="#9bcc62"/>
+  <path d="M256 98 C 284 98 306 80 310 52 C 280 52 258 70 256 98 Z" fill="#76a846"/>
+  <!-- cuernos -->
+  <path d="M168 196 C 104 184 66 142 80 88 C 98 126 132 144 188 152 Z" fill="url(#cuerno)" stroke="#bda97a" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M344 196 C 408 184 446 142 432 88 C 414 126 380 144 324 152 Z" fill="url(#cuerno)" stroke="#bda97a" stroke-width="4" stroke-linejoin="round"/>
+  <!-- orejas -->
+  <ellipse cx="118" cy="246" rx="50" ry="25" transform="rotate(-18 118 246)" fill="#c1824a"/>
+  <ellipse cx="124" cy="247" rx="30" ry="12" transform="rotate(-18 124 247)" fill="#e7b6a0"/>
+  <ellipse cx="394" cy="246" rx="50" ry="25" transform="rotate(18 394 246)" fill="#c1824a"/>
+  <ellipse cx="388" cy="247" rx="30" ry="12" transform="rotate(18 388 247)" fill="#e7b6a0"/>
+  <!-- cabeza -->
+  <path d="M190 158 C 222 138 290 138 322 158 C 356 190 356 252 342 304 C 334 350 320 398 298 424 C 286 438 226 438 214 424 C 192 398 178 350 170 304 C 156 252 156 190 190 158 Z" fill="url(#pelo)"/>
+  <path d="M214 170 C 238 158 274 158 298 170" stroke="#f0cc98" stroke-width="9" fill="none" stroke-linecap="round" opacity=".8"/>
+  <!-- ojos -->
+  <ellipse cx="204" cy="262" rx="26" ry="18" fill="#f6e6c8"/><ellipse cx="308" cy="262" rx="26" ry="18" fill="#f6e6c8"/>
+  <circle cx="206" cy="262" r="10" fill="#241912"/><circle cx="306" cy="262" r="10" fill="#241912"/>
+  <circle cx="210" cy="258" r="3.4" fill="#fff"/><circle cx="310" cy="258" r="3.4" fill="#fff"/>
+  <!-- hocico -->
+  <ellipse cx="256" cy="388" rx="64" ry="46" fill="#f4e0bb"/>
+  <ellipse cx="232" cy="394" rx="9" ry="14" transform="rotate(12 232 394)" fill="#5a3a2c"/>
+  <ellipse cx="280" cy="394" rx="9" ry="14" transform="rotate(-12 280 394)" fill="#5a3a2c"/>
+  <path d="M236 420 C 248 428 264 428 276 420" stroke="#9c6b52" stroke-width="5" fill="none" stroke-linecap="round"/>
+</g>
+  
+</svg>

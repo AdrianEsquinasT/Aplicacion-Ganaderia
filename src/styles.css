@@ -12,7 +12,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
 input, select, textarea { font: inherit; color: var(--text); }
 .muted { color: var(--muted); } .small { font-size: 0.857rem; } .center { text-align: center; } .grow { flex: 1; } .nowrap { white-space: nowrap; }
-.loading { display: grid; place-items: center; height: 100%; color: var(--muted); }
+.loading { display: grid; place-content: center; justify-items: center; gap: 0.8rem; height: 100%; color: var(--muted); } .loading img { width: 5rem; height: 5rem; border-radius: 1.2rem; }
 
 /* ---- estructura ---- */
 .app { min-height: 100%; display: grid; grid-template-columns: clamp(11rem, 14vw, 15.5rem) minmax(0, 1fr); grid-template-rows: 1fr auto; grid-template-areas: 'side main' 'bottom bottom'; }
@@ -225,3 +225,8 @@ fieldset { border: 1px solid var(--line); border-radius: 0.714rem; padding: 0.71
 .bottom { overflow-x: auto; } .bottom button { flex: 1 0 4.4rem; }
 
 .ubic-card .ubic-img { aspect-ratio: 16 / 8; } .ubic-card .ph-box svg { opacity: .8; }
+
+/* ---- logotipo ---- */
+.brand img.logo-app { border-radius: 1.4rem; border: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
+.hero-logo { display: none; }
+@media (max-width: 56em) { .hero-logo { display: inline-block; width: 1.9rem; height: 1.9rem; margin-right: 0.55rem; vertical-align: -0.35rem; border-radius: 0.5rem; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); } }
