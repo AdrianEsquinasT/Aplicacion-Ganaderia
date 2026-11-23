@@ -243,9 +243,8 @@ fieldset { border: 1px solid var(--line); border-radius: 0.714rem; padding: 0.71
 .toolbar > select, .toolbar > .search, .toolbar > .inline, .toolbar > .btn { flex: 1 1 11rem; min-width: 0; } .toolbar > .inline select { flex: 1 1 8rem; min-width: 0; }
 .toolbar.filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); } .toolbar.filters select { width: 100%; }
 select { max-width: 100%; text-overflow: ellipsis; }
-.sheet { container-type: inline-size; padding-bottom: calc(1.3rem + env(safe-area-inset-bottom)); }
+.sheet { container-type: inline-size; }
 @container (max-width: 36rem) { .row3 > .fld:last-child:nth-child(odd) { grid-column: 1 / -1; } }
-.sheet .form-grid > .full:last-child:has(> .form-actions) { position: sticky; bottom: -0.6rem; z-index: 3; background: linear-gradient(to top, var(--cream) 78%, rgba(247, 240, 224, 0)); padding: 0.9rem 0 0.1rem; }
 .toast { bottom: calc(5rem + env(safe-area-inset-bottom)); }
 .hero { padding-top: calc(1.1rem + env(safe-area-inset-top)); }
 .lote-list { display: grid; gap: 0.5rem; margin-top: 0.6rem; } .lote-list > li { background: #fbf5e6; border: 1px solid var(--line); border-radius: 0.8rem; padding: 0.6rem 0.8rem; }
@@ -267,3 +266,74 @@ select { max-width: 100%; text-overflow: ellipsis; }
 }
 
 .lote-name { flex: 1 1 9rem; min-width: 0; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; } .lote-actions { display: flex; align-items: center; gap: 0.3rem; margin-left: auto; }
+
+/* =====================================================================
+   Controles de formulario: aspecto único y estructurado en todos los navegadores
+   (desplegables, fechas, horas, números y texto). Se define aquí, al final, para
+   que sustituya a los estilos anteriores.
+   ===================================================================== */
+:root {
+  --campo-alto: max(2.7rem, 44px);
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a4a22' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  --icono-fecha: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a4a22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h16v14H4zM4 10h16M8 3v4M16 3v4'/%3E%3C/svg%3E");
+  --icono-hora: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a4a22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+}
+select, input[type=text], input[type=date], input[type=number], input[type=time], input:not([type]), textarea {
+  -webkit-appearance: none; appearance: none;
+  display: block; box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%;
+  min-height: var(--campo-alto); margin: 0;
+  padding: 0.55rem 0.85rem;
+  font: inherit; line-height: 1.3; color: var(--text); text-align: left;
+  background-color: #fff; border: 1px solid #cdbf98; border-radius: 0.7rem;
+  box-shadow: inset 0 1px 2px rgba(60, 50, 20, .06);
+}
+textarea { min-height: calc(var(--campo-alto) * 1.6); resize: vertical; }
+select {
+  padding-right: 2.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background-image: var(--chevron); background-repeat: no-repeat; background-position: right 0.85rem center; background-size: 1.05rem;
+}
+select:disabled, input:disabled { opacity: .55; }
+input[type=date], input[type=time] { position: relative; padding-right: 2.8rem; background-repeat: no-repeat; background-position: right 0.85rem center; background-size: 1.15rem; }
+input[type=date] { background-image: var(--icono-fecha); }
+input[type=time] { background-image: var(--icono-hora); }
+/* Safari de iOS: texto alineado a la izquierda y altura estable aunque el campo esté vacío */
+input[type=date]::-webkit-date-and-time-value, input[type=time]::-webkit-date-and-time-value { text-align: left; min-height: 1.3em; margin: 0; padding: 0; }
+input[type=date]::-webkit-datetime-edit, input[type=time]::-webkit-datetime-edit { padding: 0; }
+/* escritorio: el icono nativo se oculta (ya hay uno propio) pero toda la casilla abre el calendario */
+input[type=date]::-webkit-calendar-picker-indicator, input[type=time]::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: auto; height: auto; opacity: 0; cursor: pointer; }
+select:focus, input:focus, textarea:focus { outline: 2px solid rgba(79, 122, 58, .45); outline-offset: 1px; border-color: var(--green); }
+.fld { min-width: 0; }
+.fld > span { color: #4a4a35; }
+/* buscadores: una sola caja, con el mismo alto que el resto de campos */
+.search { min-height: var(--campo-alto); padding: 0 0.85rem; border-radius: 0.7rem; background: #fff; border: 1px solid #cdbf98; box-shadow: inset 0 1px 2px rgba(60, 50, 20, .06); }
+.search:focus-within { outline: 2px solid rgba(79, 122, 58, .45); outline-offset: 1px; border-color: var(--green); }
+label.search input, label.search input:not([type]) { border: 0; outline: 0; background: transparent; box-shadow: none; min-height: 0; padding: 0.4rem 0; border-radius: 0; }
+/* columnas de los formularios: una en móvil (los desplegables caben enteros), dos o tres en pantallas anchas */
+.form-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+.row3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
+.check { min-height: var(--campo-alto); } .check input { width: 1.3rem; height: 1.3rem; accent-color: var(--green); flex: none; }
+fieldset { padding: 0.7rem 0.9rem 0.9rem; background: rgba(255, 255, 255, .35); } legend { font-size: 0.93rem; }
+/* barra de acciones del formulario: opaca, a todo el ancho y siempre visible */
+.sheet .form-grid > .full:last-child:has(> .form-actions) {
+  position: sticky; bottom: 0; z-index: 3;
+  margin: 0.4rem calc(-1 * var(--sheet-pad)) calc(-1 * var(--sheet-pad)); padding: 0.7rem var(--sheet-pad) calc(0.7rem + env(safe-area-inset-bottom));
+  background: var(--cream); border-top: 1px solid var(--line); box-shadow: 0 -8px 14px rgba(60, 50, 20, .08);
+}
+.sheet { --sheet-pad: 1.3rem; padding: var(--sheet-pad); padding-bottom: var(--sheet-pad); }
+.form-actions { justify-content: flex-end; } .form-actions .btn { min-width: 6.5rem; justify-content: center; }
+/* desplegables de contenido («Historial de…»): bloque con título y flecha */
+.more { margin-top: 0.8rem; border: 1px solid var(--line); border-radius: 0.8rem; background: rgba(255, 255, 255, .45); overflow: hidden; }
+.more > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.7rem 0.9rem; min-height: var(--campo-alto); cursor: pointer; color: var(--text); font-weight: 600; background: #efe5ca; }
+.more > summary::-webkit-details-marker { display: none; }
+.more > summary::after { content: ''; flex: none; width: 1.05rem; height: 1.05rem; background: var(--chevron) center / contain no-repeat; transition: transform .2s; }
+.more[open] > summary::after { transform: rotate(180deg); }
+.more[open] > summary { border-bottom: 1px solid var(--line); }
+.more > :not(summary) { margin: 0.7rem 0.9rem; }
+.head > .inline { flex: 1 1 16rem; } .inline > select, .inline > input { flex: 1 1 9rem; min-width: 0; } .inline > .btn { flex: 1 1 auto; justify-content: center; }
+.toolbar.filters .btn { justify-content: center; }
+@media (min-width: 40em) { .head > .inline { flex: 0 1 auto; } .inline > select, .inline > input { flex: 0 1 14rem; } .inline > .btn { flex: 0 0 auto; } }
+/* iOS: con menos de 16 px Safari hace zoom al tocar un campo. Va al final para que nada la anule. */
+@media (pointer: coarse) {
+  select, input[type=text], input[type=date], input[type=number], input[type=time], input:not([type]), textarea { font-size: max(1rem, 16px); }
+  label.search input, label.search input:not([type]) { font-size: max(1rem, 16px); }
+}
