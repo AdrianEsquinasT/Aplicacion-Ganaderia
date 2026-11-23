@@ -82,3 +82,5 @@ export function resizeImage(file: File, max = 1000, quality = 0.82): Promise<str
     img.src = url
   })
 }
+
+export const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno : varios}`

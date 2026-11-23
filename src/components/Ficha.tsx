@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { A } from '../actions'
 import * as L from '../logic'
 import type { Index } from '../logic'
-import { go, verAnimal } from '../router'
+import { go, verAnimal, verUbicacion } from '../router'
 import type { Animal, Ciclo, TipoFoto } from '../types'
 import { ageLabel, avg, daysBetween, fmtDate, fmtNum, today } from '../util'
 import { AnimalForm, BajaForm, CicloForm, PartoForm, PesoForm, SanidadForm } from './forms'
+import { MoverAnimalForm } from './formsUbic'
+import { diasMov, diasPorUbicacion, ubicacionActual } from '../ubicaciones'
 import { LineChart } from './charts'
 import Donut from './Donut'
 import * as I from './Icons'
@@ -13,7 +15,7 @@ import Pedigree from './Pedigree'
 import Timeline from './Timeline'
 import { Avatar, Card, Empty, FormActions, Field, PhotoPicker, ScoreBar, SexMark, Sheet, toast } from './ui'
 
-type Modal = null | 'edit' | 'peso' | 'ciclo' | 'ciclo-edit' | 'parto' | 'sanidad' | 'foto' | 'baja'
+type Modal = null | 'mover' | 'edit' | 'peso' | 'ciclo' | 'ciclo-edit' | 'parto' | 'sanidad' | 'foto' | 'baja'
 
 const dmy = (iso: number) => {
   const d = new Date(iso)
@@ -93,6 +95,9 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
   const desc = L.resumenDescendencia(i, a.id)
   const fotos = i.state.photos.filter((p) => p.ownerId === a.id)
   const nombre = L.etiqueta(i, a)
+  const ubAct = ubicacionActual(i, a)
+  const movs = [...(i.movAnimal.get(a.id) ?? [])].reverse()
+  const porUbic = diasPorUbicacion(i, a.id)
 
   return (
     <div className="ficha">
@@ -128,6 +133,8 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
             <div><dt>Nacimiento</dt><dd>{fmtDate(a.birth)}</dd></div>
             <div><dt>Explotación</dt><dd>{a.explotacion ?? cfg.nombre}</dd></div>
             <div><dt>Lote</dt><dd>{lote ?? '—'}</dd></div>
+            <div><dt>Ubicación actual</dt><dd>{ubAct?.ub ? <button className="link" onClick={() => verUbicacion(ubAct.ub!.id)}>{ubAct.ub.nombre}</button> : 'Sin asignar'}{ubAct && <small className="muted"> · {diasMov(ubAct.mov)} días</small>}</dd></div>
+            {(a.collarGps || a.collarProveedor) && <div><dt>Collar GPS</dt><dd>{[a.collarProveedor, a.collarGps].filter(Boolean).join(' · ')}</dd></div>}
             <div><dt>Estado actual</dt><dd>{baja ? 'Baja' : 'Activo'}</dd></div>
             <div><dt>Fecha de alta</dt><dd>{fmtDate(a.entryDate ?? a.birth)}</dd></div>
             {baja && <div><dt>Fecha de baja</dt><dd>{fmtDate(baja.fecha)}</dd></div>}
@@ -148,6 +155,7 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
         {esVaca && <button className="btn soft" onClick={() => setModal('parto')}><I.Cow size={16} /> Registrar parto</button>}
         <button className="btn soft" onClick={() => setModal('sanidad')}><I.Cross size={16} /> Añadir actuación sanitaria</button>
         <button className="btn soft" onClick={() => setModal('foto')}><I.Camera size={16} /> Añadir fotografía</button>
+        {!baja && <button className="btn soft" onClick={() => setModal('mover')}><I.Leaf size={16} /> Mover a otra ubicación</button>}
         <button className="btn soft" onClick={() => go('genealogia', a.id)}><I.Tree size={16} /> Ver genealogía</button>
         {baja ? <button className="btn ghost" onClick={() => { A.reactivar(a.id); toast('Animal reactivado') }}>Reactivar</button> : <button className="btn ghost danger" onClick={() => setModal('baja')}>Dar de baja</button>}
       </div>
@@ -249,6 +257,17 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
           )}
         </Card>
 
+        <Card title="Historial de praderas y ubicaciones" icon={<I.Leaf size={20} />} action={!baja ? <button className="btn soft" onClick={() => setModal('mover')}><I.Plus size={14} /> Mover</button> : undefined} className="g-ubic">
+          {movs.length === 0 ? <Empty>Sin ubicaciones registradas. Lleva al animal a una pradera desde su ficha o desde «Praderas».</Empty> : (
+            <>
+              <div className="chips-stats">{porUbic.map((x, k) => <span key={k}><b>{x.dias}</b> días · {x.ub?.nombre ?? '—'}</span>)}</div>
+              <div className="table-wrap"><table className="tbl"><thead><tr><th>Ubicación</th><th>Entrada</th><th>Salida</th><th>Tiempo allí</th><th>Obs.</th></tr></thead><tbody>
+                {movs.map((m) => <tr key={m.id} className="click" onClick={() => verUbicacion(m.ubicacionId)}><td><b>{i.ubic.get(m.ubicacionId)?.nombre ?? '—'}</b></td><td>{fmtDate(m.entrada)}{m.horaEntrada ? ` · ${m.horaEntrada}` : ''}</td><td>{m.salida ? fmtDate(m.salida) : <span className="pill ok">aquí</span>}</td><td>{diasMov(m)} días</td><td>{m.loteNombre ?? m.obs ?? '—'}</td></tr>)}
+              </tbody></table></div>
+            </>
+          )}
+        </Card>
+
         <Card title="Valoración del animal" icon={<I.Star size={20} />} className="g-val">
           <p className="notice">Índices internos de la explotación, calculados solo con los datos registrados. <b>No son valores genéticos oficiales.</b></p>
           <ul className="scores">
@@ -294,6 +313,7 @@ export default function Ficha({ i, animal: a }: { i: Index; animal: Animal }) {
         </Card>
       </div>
 
+      {modal === 'mover' && <MoverAnimalForm i={i} animal={a} onClose={() => setModal(null)} />}
       {modal === 'edit' && <AnimalForm i={i} animal={a} onClose={() => setModal(null)} />}
       {modal === 'peso' && <PesoForm i={i} animal={a} onClose={() => setModal(null)} />}
       {modal === 'ciclo' && <CicloForm i={i} vaca={a} onClose={() => setModal(null)} />}

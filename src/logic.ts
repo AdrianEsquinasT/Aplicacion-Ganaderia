@@ -1,5 +1,5 @@
 // Todo lo que se CALCULA a partir de los datos registrados. Nada de esto se guarda.
-import type { Animal, BreedShare, Category, Ciclo, Parto, Pesaje, Photo, Ref, Sanidad, Semental, State, Baja, Lote } from './types'
+import type { Animal, BreedShare, Category, Ciclo, Parto, Pesaje, Photo, Ref, Sanidad, Semental, State, Baja, Lote, Ubicacion, Movimiento, Visita, Labor } from './types'
 import { addDays, avg, clamp, daysBetween, fmtDate, monthsBetween, today, year } from './util'
 
 export interface Index {
@@ -15,6 +15,11 @@ export interface Index {
   sanidad: Map<string, Sanidad[]> // por animal, más reciente primero
   baja: Map<string, Baja>
   nPartos: Map<string, number>
+  ubic: Map<string, Ubicacion>
+  movAnimal: Map<string, Movimiento[]> // por animal, cronológico
+  movUbic: Map<string, Movimiento[]> // por ubicación, cronológico
+  visitas: Map<string, Visita[]> // por ubicación, más reciente primero
+  labores: Map<string, Labor[]> // por ubicación, más reciente primero
 }
 
 function push<T>(m: Map<string, T[]>, k: string, v: T) {
@@ -47,9 +52,27 @@ export function buildIndex(s: State): Index {
   const sanidad = new Map<string, Sanidad[]>()
   for (const x of s.sanidad) push(sanidad, x.animalId, x)
   for (const l of sanidad.values()) l.sort((a, b) => b.fecha.localeCompare(a.fecha))
+  const movAnimal = new Map<string, Movimiento[]>()
+  const movUbic = new Map<string, Movimiento[]>()
+  for (const m of s.movimientos) {
+    push(movAnimal, m.animalId, m)
+    push(movUbic, m.ubicacionId, m)
+  }
+  for (const l of [...movAnimal.values(), ...movUbic.values()]) l.sort((a, b) => a.entrada.localeCompare(b.entrada))
+  const visitas = new Map<string, Visita[]>()
+  for (const v of s.visitas) push(visitas, v.ubicacionId, v)
+  for (const l of visitas.values()) l.sort((a, b) => b.fecha.localeCompare(a.fecha))
+  const labores = new Map<string, Labor[]>()
+  for (const x of s.labores) push(labores, x.ubicacionId, x)
+  for (const l of labores.values()) l.sort((a, b) => b.fecha.localeCompare(a.fecha))
   return {
     state: s,
     animal,
+    ubic: new Map(s.ubicaciones.map((u) => [u.id, u])),
+    movAnimal,
+    movUbic,
+    visitas,
+    labores,
     semental: new Map(s.sementales.map((x) => [x.id, x])),
     photo: new Map(s.photos.map((p) => [p.id, p])),
     lote: new Map(s.lotes.map((l) => [l.id, l])),
@@ -348,7 +371,7 @@ export function finTratamiento(x: Sanidad): string | undefined {
 }
 
 export interface Aviso {
-  tipo: 'parto' | 'vacuna' | 'desparasitacion' | 'revision' | 'sin-gestar' | 'incidencia' | 'decision' | 'tratamiento'
+  tipo: 'parto' | 'vacuna' | 'desparasitacion' | 'revision' | 'sin-gestar' | 'incidencia' | 'decision' | 'tratamiento' | 'pradera'
   texto: string
   animalId?: string
   fecha?: string
@@ -580,6 +603,11 @@ export function historial(i: Index, a: Animal): Evento[] {
     if (h.dam === a.id && i.partoDeCria.has(h.id)) ev.push({ fecha: h.birth, tipo: 'Parto', texto: `Parto: ${etiqueta(i, h)} (${h.sex === 'M' ? 'macho' : 'hembra'})` })
   }
   for (const s of i.sanidad.get(a.id) ?? []) ev.push({ fecha: s.fecha, tipo: 'Sanidad', texto: `${s.tipo}${s.producto ? ': ' + s.producto : ''}${s.obs ? ' – ' + s.obs : ''}` })
+  for (const m of i.movAnimal.get(a.id) ?? []) {
+    const u = i.ubic.get(m.ubicacionId)?.nombre ?? 'ubicación eliminada'
+    ev.push({ fecha: m.entrada, tipo: 'Ubicación', texto: `Entrada en ${u}` })
+    if (m.salida) ev.push({ fecha: m.salida, tipo: 'Ubicación', texto: `Salida de ${u} (${daysBetween(m.entrada, m.salida)} días)` })
+  }
   const b = i.baja.get(a.id)
   if (b) ev.push({ fecha: b.fecha, tipo: 'Baja', texto: `Baja: ${b.motivo}${b.precio ? ' (' + b.precio + ' €)' : ''}` })
   return ev.sort((x, y) => x.fecha.localeCompare(y.fecha))

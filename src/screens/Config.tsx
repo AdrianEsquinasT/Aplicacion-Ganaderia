@@ -54,6 +54,8 @@ export default function Config({ i }: { i: Index }) {
         <div className="form-grid">
           <Field label="Días de gestación" hint="Para calcular la fecha prevista de parto desde la inseminación"><input type="number" min="250" max="320" value={c.gestacionDias} onChange={(e) => set({ gestacionDias: Number(e.target.value) || 280 })} /></Field>
           <Field label="Aviso «sin gestar» (días desde el parto)"><input type="number" min="30" value={c.diasSinGestar} onChange={(e) => set({ diasSinGestar: Number(e.target.value) || 120 })} /></Field>
+          <Field label="Aviso «llevan N días en la pradera»" hint="Días de ocupación a partir de los cuales se avisa"><input type="number" min="1" value={c.diasAvisoOcupacion ?? 30} onChange={(e) => set({ diasAvisoOcupacion: Number(e.target.value) || 30 })} /></Field>
+          <Field label="Descanso mínimo de una pradera (días)" hint="Es un valor tuyo, no una recomendación agronómica"><input type="number" min="0" value={c.diasDescansoMin ?? 30} onChange={(e) => set({ diasDescansoMin: Number(e.target.value) || 0 })} /></Field>
           <Field label="Ventana de avisos (días por adelantado)"><input type="number" min="7" value={c.avisoDias} onChange={(e) => set({ avisoDias: Number(e.target.value) || 90 })} /></Field>
         </div>
       </Card>

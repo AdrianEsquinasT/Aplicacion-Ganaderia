@@ -11,10 +11,11 @@ import Estadisticas from './screens/Estadisticas'
 import Genealogia from './screens/Genealogia'
 import Inicio, { HeroStats } from './screens/Inicio'
 import Resumen from './screens/Resumen'
-import * as L from './logic'
+import { avisosTodos } from './ubicaciones'
 import Produccion from './screens/Produccion'
 import Reproduccion from './screens/Reproduccion'
 import Sanidad from './screens/Sanidad'
+import Ubicaciones from './screens/Ubicaciones'
 import { initStore, useIndex } from './store'
 
 const NAV: { s: Screen; label: string; icon: (p: { size?: number }) => JSX.Element }[] = [
@@ -22,6 +23,7 @@ const NAV: { s: Screen; label: string; icon: (p: { size?: number }) => JSX.Eleme
   { s: 'resumen', label: 'Mi Resumen', icon: I.Pulse },
   { s: 'animales', label: 'Mis Animales', icon: I.Cow },
   { s: 'reproduccion', label: 'Reproducción', icon: I.Heart },
+  { s: 'ubicaciones', label: 'Praderas', icon: I.Leaf },
   { s: 'catalogo', label: 'Catálogo de Sementales', icon: I.Book },
   { s: 'genealogia', label: 'Genealogía', icon: I.Tree },
   { s: 'produccion', label: 'Producción', icon: I.Scale },
@@ -34,6 +36,7 @@ const BOTTOM: { s: Screen; label: string; short?: string; icon: (p: { size?: num
   { s: 'resumen', label: 'Resumen', icon: I.Pulse },
   { s: 'animales', label: 'Animales', icon: I.Cow },
   { s: 'reproduccion', label: 'Reproducción', short: 'Repro.', icon: I.Heart },
+  { s: 'ubicaciones', label: 'Praderas', icon: I.Leaf },
   { s: 'genealogia', label: 'Genealogía', short: 'Árbol', icon: I.Tree },
   { s: 'produccion', label: 'Producción', short: 'Pesos', icon: I.Scale },
   { s: 'sanidad', label: 'Sanidad', icon: I.Cross },
@@ -47,7 +50,7 @@ function Shell() {
   const cfg = i.state.config
   const logo = fotoAnimal(i, { mainPhotoId: cfg.logoPhotoId })
   const act = grupo(r.screen)
-  const nAvisos = L.avisos(i).length
+  const nAvisos = avisosTodos(i).length
 
   return (
     <div className="app">
@@ -85,6 +88,7 @@ function Shell() {
             {r.screen === 'lotes' && <Lotes i={i} />}
             {r.screen === 'bajas' && <Bajas i={i} />}
             {r.screen === 'reproduccion' && <Reproduccion i={i} />}
+            {r.screen === 'ubicaciones' && <Ubicaciones i={i} id={r.id} />}
             {r.screen === 'catalogo' && <Catalogo i={i} id={r.id} />}
             {r.screen === 'genealogia' && <Genealogia i={i} id={r.id} />}
             {r.screen === 'produccion' && <Produccion i={i} />}

@@ -7,6 +7,7 @@ import * as I from '../components/Icons'
 import Pedigree from '../components/Pedigree'
 import { Avatar, Empty, SexMark, Toast } from '../components/ui'
 import * as L from '../logic'
+import { avisosTodos, diasMov, ubicacionActual } from '../ubicaciones'
 import type { Index } from '../logic'
 import { go, verAnimal } from '../router'
 import type { Animal, Category } from '../types'
@@ -14,7 +15,7 @@ import { ageLabel, fmtDate, fmtNum } from '../util'
 
 type Modal = null | 'peso' | 'ciclo' | 'parto' | 'sanidad' | 'foto' | 'edit' | 'nuevo'
 const FILTROS: { label: string; cat?: Category }[] = [{ label: 'Todas' }, { label: 'Vacas', cat: 'Vaca' }, { label: 'Toros', cat: 'Toro' }, { label: 'Novillas', cat: 'Novilla' }, { label: 'Terneros', cat: 'Ternero' }]
-const AVISO_ICON: Record<L.Aviso['tipo'], (p: { size?: number }) => JSX.Element> = { parto: I.Calendar, vacuna: I.Syringe, desparasitacion: I.Drops, revision: I.Calendar, 'sin-gestar': I.Heart, incidencia: I.Bell, decision: I.Tag, tratamiento: I.Cross }
+const AVISO_ICON: Record<L.Aviso['tipo'], (p: { size?: number }) => JSX.Element> = { parto: I.Calendar, vacuna: I.Syringe, desparasitacion: I.Drops, revision: I.Calendar, 'sin-gestar': I.Heart, incidencia: I.Bell, decision: I.Tag, tratamiento: I.Cross, pradera: I.Leaf }
 const dmy = (x: number) => { const d = new Date(x); return `${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCFullYear()).slice(2)}` }
 
 /** Cifras de la explotación que van dentro de la cabecera. */
@@ -49,7 +50,7 @@ export default function Inicio({ i }: { i: Index }) {
   }, [i, act, filtro, q])
 
   const a: Animal | undefined = (selId ? i.animal.get(selId) : undefined) ?? act.find((x) => L.categoria(i, x) === 'Vaca' && L.estadoRepro(i, x) === 'Gestante') ?? act[0]
-  const av = L.avisos(i)
+  const av = avisosTodos(i)
 
   if (!a) {
     return (
@@ -72,6 +73,7 @@ export default function Inicio({ i }: { i: Index }) {
   const hijos = L.hijosDe(i, a.id)
   const san = (i.sanidad.get(a.id) ?? []).slice(0, 4)
   const lote = a.loteId ? i.lote.get(a.loteId)?.name : undefined
+  const ubAct = ubicacionActual(i, a)
   const hoy = new Date().toISOString().slice(0, 10)
   const pasos = ciclo
     ? [
@@ -129,6 +131,7 @@ export default function Inicio({ i }: { i: Index }) {
             <div><I.Scale size={18} /><dt>Peso actual:</dt><dd>{peso ? `${peso.kg} kg` : '—'}</dd></div>
             <div><I.Pulse size={18} /><dt>Condición corporal:</dt><dd>{a.condition ? `${a.condition}/5` : '—'}</dd></div>
             <div><I.Pin size={18} /><dt>Lote:</dt><dd>{lote ?? '—'}</dd></div>
+            <div><I.Leaf size={18} /><dt>Ubicación:</dt><dd>{ubAct?.ub ? `${ubAct.ub.nombre} (${diasMov(ubAct.mov)} días)` : 'Sin asignar'}</dd></div>
           </dl>
         </div>
         <div className="breed">

@@ -6,6 +6,7 @@ import { Card, Empty, Toast } from '../components/ui'
 import * as L from '../logic'
 import type { Index } from '../logic'
 import { verAnimal } from '../router'
+import { avisosTodos } from '../ubicaciones'
 import { TIPOS_SANIDAD } from '../types'
 import type { Sanidad as S } from '../types'
 import { fmtDate } from '../util'
@@ -16,13 +17,14 @@ const GRUPOS: { tipo: L.Aviso['tipo']; titulo: string }[] = [
   { tipo: 'revision', titulo: 'Revisiones pendientes' },
   { tipo: 'tratamiento', titulo: 'Tratamientos activos / que terminan' },
   { tipo: 'incidencia', titulo: 'Incidencias recientes' },
+  { tipo: 'pradera', titulo: 'Praderas y ubicaciones' },
 ]
 
 export default function Sanidad({ i }: { i: Index }) {
   const [form, setForm] = useState<S | 'nuevo' | null>(null)
   const [tipo, setTipo] = useState('')
   const [q, setQ] = useState('')
-  const av = L.avisos(i)
+  const av = avisosTodos(i)
   const lista = [...i.state.sanidad]
     .filter((x) => (!tipo || x.tipo === tipo) && (!q.trim() || (i.animal.get(x.animalId) ? L.etiqueta(i, i.animal.get(x.animalId)!) : '').toLowerCase().includes(q.trim().toLowerCase()) || (x.producto ?? '').toLowerCase().includes(q.trim().toLowerCase())))
     .sort((a, b) => b.fecha.localeCompare(a.fecha))

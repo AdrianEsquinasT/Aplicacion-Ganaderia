@@ -2,19 +2,20 @@ import { BarChart } from '../components/charts'
 import * as I from '../components/Icons'
 import { Card, Kpi, Toast } from '../components/ui'
 import * as L from '../logic'
+import { avisosTodos } from '../ubicaciones'
 import type { Index } from '../logic'
 import { go, verAnimal } from '../router'
 import { fmtDate, fmtNum, today, year } from '../util'
 
 const ICONO: Record<L.Aviso['tipo'], (p: { size?: number }) => JSX.Element> = {
-  parto: I.Cow, vacuna: I.Syringe, desparasitacion: I.Drops, revision: I.Calendar, 'sin-gestar': I.Heart, incidencia: I.Bell, decision: I.Tag, tratamiento: I.Cross,
+  parto: I.Cow, vacuna: I.Syringe, desparasitacion: I.Drops, revision: I.Calendar, 'sin-gestar': I.Heart, incidencia: I.Bell, decision: I.Tag, tratamiento: I.Cross, pradera: I.Leaf,
 }
 
 export default function Resumen({ i }: { i: Index }) {
   const rs = L.resumenRebano(i)
   const st = L.statsRepro(i)
   const pr = L.statsProduccion(i)
-  const av = L.avisos(i)
+  const av = avisosTodos(i)
   const cuenta = (t: L.Aviso['tipo']) => av.filter((a) => a.tipo === t).length
   const anios = L.seriePorAnio(i, (y) => y).map((x) => x.year).filter((y) => y >= 2019)
   const act = L.activos(i)

@@ -3,7 +3,8 @@ import { buildIndex, composicion, razaPrincipal } from './logic'
 import { mutate, getState, replaceState } from './store'
 import { makeSeed } from './seed'
 import { uid } from './util'
-import type { Animal, Baja, Ciclo, Config, Facilidad, Lote, Parto, Pesaje, Photo, Ref, Sanidad, Semental, Sex, State, TipoFoto, TipoParto } from './types'
+import { movimientoAbierto } from './ubicaciones'
+import type { Animal, Baja, Ciclo, Config, Facilidad, Labor, Lote, Movimiento, Parto, Pesaje, Photo, Ref, Sanidad, Semental, Sex, State, TipoFoto, TipoParto, Ubicacion, Visita } from './types'
 
 function upsert<T extends { id: string }>(arr: T[], x: T): T[] {
   return arr.some((y) => y.id === x.id) ? arr.map((y) => (y.id === x.id ? x : y)) : [...arr, x]
@@ -87,9 +88,9 @@ export const A = {
     mutate((s) => ({ ...s, bajas: s.bajas.filter((b) => b.animalId !== animalId) }))
   },
 
-  addPhoto(ownerId: string, tipo: TipoFoto, data: string, principal = false) {
+  addPhoto(ownerId: string, tipo: TipoFoto, data: string, principal = false, fecha?: string) {
     mutate((s) => {
-      const p: Photo = { id: uid(), ownerId, tipo, data }
+      const p: Photo = { id: uid(), ownerId, tipo, data, fecha }
       const hasMain = s.animals.find((a) => a.id === ownerId)?.mainPhotoId
       const setMain = principal || !hasMain
       return {
@@ -97,12 +98,16 @@ export const A = {
         photos: [...s.photos, p],
         animals: s.animals.map((a) => (a.id === ownerId && setMain ? { ...a, mainPhotoId: p.id } : a)),
         sementales: s.sementales.map((x) => (x.id === ownerId && (principal || !x.photoId) ? { ...x, photoId: p.id } : x)),
+        ubicaciones: s.ubicaciones.map((u) => (u.id === ownerId && (principal || !u.mainPhotoId) ? { ...u, mainPhotoId: p.id } : u)),
         config: ownerId === 'config' ? { ...s.config, logoPhotoId: p.id } : s.config,
       }
     })
   },
   setMainPhoto(animalId: string, photoId: string) {
     mutate((s) => ({ ...s, animals: s.animals.map((a) => (a.id === animalId ? { ...a, mainPhotoId: photoId } : a)) }))
+  },
+  setPhotoUbic(photoId: string, ubicacionId: string) {
+    mutate((s) => ({ ...s, ubicaciones: s.ubicaciones.map((u) => (u.id === ubicacionId ? { ...u, mainPhotoId: photoId } : u)) }))
   },
   deletePhoto(id: string) {
     mutate((s) => {
@@ -115,9 +120,102 @@ export const A = {
         photos: rest,
         animals: s.animals.map((a) => (a.mainPhotoId === id ? { ...a, mainPhotoId: next } : a)),
         sementales: s.sementales.map((x) => (x.photoId === id ? { ...x, photoId: next } : x)),
+        ubicaciones: s.ubicaciones.map((u) => (u.mainPhotoId === id ? { ...u, mainPhotoId: next } : u)),
         config: s.config.logoPhotoId === id ? { ...s.config, logoPhotoId: undefined } : s.config,
       }
     })
+  },
+
+  // ------------------------------------------------ praderas y ubicaciones
+  saveUbicacion(u: Ubicacion, photo?: string) {
+    mutate((s) => {
+      let photos = s.photos
+      let ub = u
+      if (photo) {
+        const p: Photo = { id: uid(), ownerId: u.id, tipo: 'principal', data: photo, fecha: new Date().toISOString().slice(0, 10) }
+        photos = [...photos, p]
+        ub = { ...u, mainPhotoId: p.id }
+      }
+      return { ...s, ubicaciones: upsert(s.ubicaciones, ub), photos }
+    })
+  },
+  /** Solo se puede borrar una ubicación sin historial; si tiene movimientos, se conserva. */
+  deleteUbicacion(id: string): boolean {
+    const s = getState()
+    if (s.movimientos.some((m) => m.ubicacionId === id)) return false
+    mutate((st) => ({
+      ...st,
+      ubicaciones: st.ubicaciones.filter((u) => u.id !== id).map((u) => (u.dentroDe === id ? { ...u, dentroDe: undefined } : u)),
+      visitas: st.visitas.filter((v) => v.ubicacionId !== id),
+      labores: st.labores.filter((l) => l.ubicacionId !== id),
+      photos: st.photos.filter((p) => p.ownerId !== id),
+    }))
+    return true
+  },
+  saveVisita(v: Visita) {
+    mutate((s) => ({ ...s, visitas: upsert(s.visitas, v) }))
+  },
+  deleteVisita(id: string) {
+    mutate((s) => ({ ...s, visitas: s.visitas.filter((v) => v.id !== id) }))
+  },
+  saveLabor(l: Labor) {
+    mutate((s) => ({ ...s, labores: upsert(s.labores, l) }))
+  },
+  deleteLabor(id: string) {
+    mutate((s) => ({ ...s, labores: s.labores.filter((l) => l.id !== id) }))
+  },
+
+  /**
+   * Llevar animales a una ubicación. Si ya estaban en otra, se cierra su estancia anterior
+   * (salida = fecha de entrada nueva) en la misma operación. Nunca se borra el historial.
+   * Devuelve cuántos se movieron y cuántos ya estaban allí.
+   */
+  llevarAnimales(inp: { ubicacionId: string; animalIds: string[]; fecha: string; hora?: string; obs?: string; loteNombre?: string }): { movidos: number; yaEstaban: number } {
+    let movidos = 0
+    let yaEstaban = 0
+    const grupoId = uid()
+    mutate((s) => {
+      const idx = buildIndex(s)
+      const nuevos: Movimiento[] = []
+      const cerrar = new Map<string, string | undefined>()
+      for (const id of inp.animalIds) {
+        const ab = movimientoAbierto(idx, id)
+        if (ab && ab.ubicacionId === inp.ubicacionId) {
+          yaEstaban++
+          continue
+        }
+        if (ab) cerrar.set(ab.id, inp.hora)
+        nuevos.push({ id: uid(), animalId: id, ubicacionId: inp.ubicacionId, entrada: inp.fecha, horaEntrada: inp.hora, obs: inp.obs, grupoId, loteNombre: inp.loteNombre })
+        movidos++
+      }
+      if (!nuevos.length) return s
+      return {
+        ...s,
+        movimientos: [...s.movimientos.map((m) => (cerrar.has(m.id) ? { ...m, salida: inp.fecha, horaSalida: cerrar.get(m.id) } : m)), ...nuevos],
+      }
+    })
+    return { movidos, yaEstaban }
+  },
+  /** Registrar la salida de animales de una ubicación (sin llevarlos a otra). */
+  registrarSalida(inp: { ubicacionId: string; animalIds: string[]; fecha: string; hora?: string }) {
+    mutate((s) => ({
+      ...s,
+      movimientos: s.movimientos.map((m) =>
+        m.ubicacionId === inp.ubicacionId && !m.salida && inp.animalIds.includes(m.animalId) ? { ...m, salida: inp.fecha, horaSalida: inp.hora } : m,
+      ),
+    }))
+  },
+  /** Corregir fechas u observaciones de una estancia. */
+  corregirMovimiento(m: Movimiento) {
+    mutate((s) => ({ ...s, movimientos: upsert(s.movimientos, m) }))
+  },
+
+  /** Añade las ubicaciones iniciales que aún no existan, sin tocar el resto de datos. */
+  cargarUbicaciones(nuevas: Ubicacion[]): number {
+    const s = getState()
+    const faltan = nuevas.filter((u) => !s.ubicaciones.some((x) => x.id === u.id))
+    if (faltan.length) mutate((st) => ({ ...st, ubicaciones: [...st.ubicaciones, ...faltan] }))
+    return faltan.length
   },
 
   saveConfig(c: Config) {
@@ -212,13 +310,14 @@ export const A = {
     const j = JSON.parse(text)
     const d = j.data as State
     if (!d || !Array.isArray(d.animals) || !d.config) throw new Error('El archivo no es una copia válida')
-    await replaceState(d)
+    // las copias anteriores a las praderas no tienen estas colecciones
+    await replaceState({ ...d, ubicaciones: d.ubicaciones ?? [], movimientos: d.movimientos ?? [], visitas: d.visitas ?? [], labores: d.labores ?? [] })
   },
   async empezarVacio() {
     const d = makeSeed()
     await replaceState({
       ...d,
-      animals: [], sementales: [], ciclos: [], partos: [], pesajes: [], sanidad: [], bajas: [], photos: [],
+      animals: [], sementales: [], ciclos: [], partos: [], pesajes: [], sanidad: [], bajas: [], photos: [], ubicaciones: [], movimientos: [], visitas: [], labores: [],
       config: { ...d.config, nombre: 'Mi Ganadería', localizacion: '' },
     })
   },

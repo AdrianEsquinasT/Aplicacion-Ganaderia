@@ -43,6 +43,8 @@ export interface Animal {
   manejabilidad?: number // 1-10, lo introduce la ganadera
   partosPrevios?: number // partos anteriores a usar la app (sin ternero registrado)
   mainPhotoId?: string
+  collarProveedor?: string // preparado para un collar GPS (sin integración todavía)
+  collarGps?: string
 }
 
 export interface Semental {
@@ -155,7 +157,8 @@ export interface Baja {
 export type TipoFoto = 'principal' | 'perfil' | 'lateral' | 'identificacion' | 'adicional'
 export interface Photo {
   id: string
-  ownerId: string // animal, semental o 'config'
+  ownerId: string // animal, semental, ubicación o 'config'
+  fecha?: string // fecha de la foto (para comparar la evolución de una pradera)
   tipo: TipoFoto
   data: string // dataURL ya reducida
 }
@@ -169,10 +172,91 @@ export interface Config {
   gestacionDias: number // para calcular la fecha prevista de parto
   diasSinGestar: number // aviso: días desde el parto sin quedar gestante
   avisoDias: number // ventana de avisos (partos, vacunas...)
+  diasAvisoOcupacion?: number // aviso «llevan N días en esta pradera» (por defecto 30)
+  diasDescansoMin?: number // días de descanso tras una salida antes de volver a usarla (por defecto 30)
   logoPhotoId?: string
 }
 
+// ---------------------------------------------------------------- praderas y ubicaciones
+export const TIPOS_UBICACION = ['Pradera propia', 'Pradera comunal', 'Monte', 'Patio', 'Nave', 'Otro'] as const
+export type TipoUbicacion = (typeof TIPOS_UBICACION)[number]
+export type EstadoUbicacion = 'Disponible' | 'En descanso' | 'Reservada' | 'No pastable'
+
+/** Pradera, monte, patio o nave. «Ocupada» no se guarda: se deduce de los animales presentes. */
+export interface Ubicacion {
+  id: string
+  nombre: string
+  tipo: TipoUbicacion
+  dentroDe?: string // zona dentro de otra ubicación (p. ej. una zona de los pastos comunales)
+  municipio?: string
+  provincia?: string
+  zona?: string
+  poligono?: string
+  parcela?: string
+  recinto?: string
+  superficieTotal?: number // ha
+  superficieAprovechable?: number // ha realmente disponibles para el ganado (distinta de la total)
+  estado: EstadoUbicacion
+  mainPhotoId?: string
+  obs?: string
+}
+
+export const CALIDADES = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'] as const
+export const CANTIDADES = ['Escasa', 'Media', 'Abundante'] as const
+export const ESTADOS_PASTO = ['Corto', 'Óptimo', 'Pasado', 'Seco'] as const
+export const HUMEDADES = ['Seco', 'Adecuado', 'Húmedo', 'Encharcado'] as const
+export const COMPOSICIONES = ['Ray-grass', 'Trébol', 'Poa', 'Llantén', 'Otras'] as const
+export const NIVELES = ['Baja', 'Media', 'Alta'] as const
+export const SOMBRAS = ['Ninguna', 'Poca', 'Abundante'] as const
+
+/** Valoración del terreno en una visita. La última visita es la valoración actual; el resto, el historial. */
+export interface Visita {
+  id: string
+  ubicacionId: string
+  fecha: string
+  calidad?: (typeof CALIDADES)[number]
+  cantidad?: (typeof CANTIDADES)[number]
+  estadoPasto?: (typeof ESTADOS_PASTO)[number]
+  humedad?: (typeof HUMEDADES)[number]
+  composicion?: string[]
+  malasHierbas?: (typeof NIVELES)[number]
+  cierre?: 'Bueno' | 'Necesita revisión'
+  agua?: boolean
+  sombra?: (typeof SOMBRAS)[number]
+  obs?: string
+}
+
+/** Estancia de UN animal en una ubicación. Sin salida = está ahí ahora. Nunca se borra: es el historial. */
+export interface Movimiento {
+  id: string
+  animalId: string
+  ubicacionId: string
+  entrada: string
+  horaEntrada?: string
+  salida?: string
+  horaSalida?: string
+  obs?: string
+  grupoId?: string // los animales movidos en una misma operación comparten grupo
+  loteNombre?: string // si se movió un lote completo
+}
+
+export const TIPOS_LABOR = ['Siega', 'Heno', 'Silo', 'Desbroce', 'Abonado', 'Resiembra', 'Mantenimiento', 'Otro'] as const
+export type TipoLabor = (typeof TIPOS_LABOR)[number]
+/** Trabajos y aprovechamientos que no son pastoreo (el pastoreo sale de los movimientos). */
+export interface Labor {
+  id: string
+  ubicacionId: string
+  fecha: string
+  tipo: TipoLabor
+  produccionKg?: number // forraje producido, si se conoce
+  obs?: string
+}
+
 export interface State {
+  ubicaciones: Ubicacion[]
+  movimientos: Movimiento[]
+  visitas: Visita[]
+  labores: Labor[]
   animals: Animal[]
   sementales: Semental[]
   ciclos: Ciclo[]
@@ -186,6 +270,10 @@ export interface State {
 }
 
 export const COLLECTIONS = [
+  'ubicaciones',
+  'movimientos',
+  'visitas',
+  'labores',
   'animals',
   'sementales',
   'ciclos',

@@ -1,5 +1,5 @@
 // DATOS FICTICIOS para probar la aplicación. No son datos reales de ninguna explotación.
-import type { Animal, Baja, Ciclo, Facilidad, Lote, Parto, Pesaje, Photo, Sanidad, Semental, State, TipoParto } from './types'
+import type { Animal, Baja, Ciclo, Facilidad, Labor, Lote, Movimiento, Parto, Pesaje, Photo, Sanidad, Semental, State, TipoParto, Ubicacion, Visita } from './types'
 
 // Ilustraciones de ejemplo (public/demo/animales, generadas con scripts/ilustraciones.py)
 const ilustracion = (nombre: string) => `${import.meta.env.BASE_URL}demo/animales/${nombre}.svg`
@@ -7,6 +7,23 @@ const ilustracion = (nombre: string) => `${import.meta.env.BASE_URL}demo/animale
 const L = {
   repro: 'l-repro', secas: 'l-secas', gest: 'l-gest', nov: 'l-nov', toros: 'l-toros',
   terneros: 'l-terneros', repos: 'l-repos', cebo: 'l-cebo', venta: 'l-venta',
+}
+
+/**
+ * Ubicaciones de partida (parcelas indicadas en el proyecto de la explotación).
+ * Las superficies son las indicadas en el proyecto; la superficie aprovechable se deja sin rellenar a propósito.
+ */
+export function ubicacionesIniciales(): Ubicacion[] {
+  const patios: Ubicacion[] = [1, 2, 3, 4, 5, 6, 7].map((n) => ({ id: `u-patio${n}`, nombre: `Patio ${n}`, tipo: 'Patio', estado: 'Disponible' }))
+  return [
+    { id: 'u-principal', nombre: 'Pradera principal', tipo: 'Pradera propia', parcela: '132', recinto: '1', superficieTotal: 4.87, estado: 'Disponible', obs: 'Uso previsto: pastoreo y posible siega.' },
+    { id: 'u-complementaria', nombre: 'Pradera complementaria', tipo: 'Pradera propia', parcela: '127', superficieTotal: 0.37, estado: 'Disponible', obs: 'Uso previsto: manejo y posible pastoreo.' },
+    { id: 'u-vivienda', nombre: 'Pradera junto a la vivienda', tipo: 'Pradera propia', parcela: '335, 334 y 135', superficieTotal: 0.825, estado: 'Disponible', obs: 'Uso previsto: pastoreo o forraje.' },
+    { id: 'u-secundaria', nombre: 'Pradera secundaria', tipo: 'Pradera propia', parcela: '84', superficieTotal: 4, estado: 'No pastable', obs: 'Actualmente manzanos. Cambiar el estado si se destina a pastoreo.' },
+    { id: 'u-comunales', nombre: 'Pastos comunales de León', tipo: 'Pradera comunal', provincia: 'León', zona: 'Montes de León', estado: 'Disponible', obs: 'Pastoreo de primavera-verano. Superficie por introducir. Se pueden crear zonas con nombre dentro de esta ubicación.' },
+    { id: 'u-nave', nombre: 'Nave de La Vega', tipo: 'Nave', estado: 'Disponible' },
+    ...patios,
+  ]
 }
 
 export function makeSeed(): State {
@@ -127,7 +144,45 @@ export function makeSeed(): State {
     { id: 'b3', animalId: 'a-bravo', fecha: '2025-02-20', motivo: 'Venta', precio: 1450 },
   ]
 
+  // ---- ubicaciones y movimientos de ejemplo (animales ficticios) ----
+  let q = 0
+  const mv = (animalId: string, ubicacionId: string, entrada: string, salida: string | undefined, grupoId: string, loteNombre?: string): Movimiento => ({ id: 'm' + ++q, animalId, ubicacionId, entrada, salida, grupoId, loteNombre })
+  const enComunales = ['a-v087', 'a-v125', 'a-v133', 'a-v098', 'a-trueno', 'a-perla']
+  const movimientos: Movimiento[] = [
+    // verano: pastos comunales
+    ...enComunales.map((id) => mv(id, 'u-comunales', '2026-06-01', '2026-10-05', 'g-subida')),
+    mv('a-v142', 'u-comunales', '2026-06-01', '2026-09-20', 'g-subida'),
+    mv('a-t034', 'u-comunales', '2026-06-01', '2026-09-20', 'g-subida'),
+    // otoño: bajada a la pradera principal (siguen ahí)
+    mv('a-v087', 'u-principal', '2026-10-05', undefined, 'g-bajada'),
+    mv('a-v125', 'u-principal', '2026-10-05', undefined, 'g-bajada'),
+    mv('a-v133', 'u-principal', '2026-10-05', undefined, 'g-bajada'),
+    mv('a-trueno', 'u-principal', '2026-10-05', undefined, 'g-bajada'),
+    mv('a-perla', 'u-principal', '2026-10-05', undefined, 'g-bajada'),
+    // monta natural de Rubia con el toro 034
+    mv('a-v142', 'u-complementaria', '2026-09-20', undefined, 'g-monta'),
+    mv('a-t034', 'u-complementaria', '2026-09-20', undefined, 'g-monta'),
+    // Nube (cojera) cerca de la vivienda
+    mv('a-v098', 'u-vivienda', '2026-11-03', undefined, 'g-nube'),
+    // novillas en patio y ternero de cebo en la nave
+    mv('a-luna', 'u-patio1', '2026-10-15', undefined, 'g-novillas', 'Novillas'),
+    mv('a-estrella', 'u-patio1', '2026-10-15', undefined, 'g-novillas', 'Novillas'),
+    mv('a-capitan', 'u-nave', '2026-09-12', undefined, 'g-cebo', 'Cebo'),
+  ]
+  const visitas: Visita[] = [
+    { id: 'vi1', ubicacionId: 'u-principal', fecha: '2026-06-01', calidad: 'Buena', cantidad: 'Abundante', estadoPasto: 'Pasado', humedad: 'Adecuado', composicion: ['Ray-grass', 'Trébol'], malasHierbas: 'Baja', cierre: 'Bueno', agua: true, sombra: 'Poca', obs: 'Dato de ejemplo.' },
+    { id: 'vi2', ubicacionId: 'u-principal', fecha: '2026-10-20', calidad: 'Buena', cantidad: 'Media', estadoPasto: 'Óptimo', humedad: 'Adecuado', composicion: ['Ray-grass', 'Trébol', 'Llantén'], malasHierbas: 'Media', cierre: 'Necesita revisión', agua: true, sombra: 'Poca', obs: 'Dato de ejemplo. Revisar el cierre del lado norte.' },
+  ]
+  const labores: Labor[] = [
+    { id: 'lb1', ubicacionId: 'u-principal', fecha: '2026-05-20', tipo: 'Siega', produccionKg: 5200, obs: 'Dato de ejemplo.' },
+    { id: 'lb2', ubicacionId: 'u-principal', fecha: '2026-03-12', tipo: 'Abonado', obs: 'Dato de ejemplo.' },
+  ]
+
   return {
+    ubicaciones: ubicacionesIniciales(),
+    movimientos,
+    visitas,
+    labores,
     animals,
     sementales,
     ciclos,

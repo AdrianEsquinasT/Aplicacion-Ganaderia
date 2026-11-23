@@ -64,6 +64,7 @@ export const Drops = wrap(
     <path d="M17 12s3 3.2 3 5.4a3 3 0 01-6 0c0-2.2 3-5.4 3-5.4z" />
   </>,
 )
+export const Leaf = wrap(<path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15zM5 19c3-5 6-8 10-10" />)
 export const Plus = wrap(<path d="M12 5v14M5 12h14" />)
 export const Chevron = wrap(<path d="M9 5l7 7-7 7" />)
 export const Check = wrap(<path d="M5 12l5 5 9-10" />)

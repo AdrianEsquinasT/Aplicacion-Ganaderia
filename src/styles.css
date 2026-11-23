@@ -202,3 +202,26 @@ fieldset { border: 1px solid var(--line); border-radius: 0.714rem; padding: 0.71
   .d-feat { order: 1; } .d-quick { order: 2; } .d-list { order: 3; } .d-repro { order: 4; } .d-estr { order: 5; } .d-peso { order: 6; } .d-gen { order: 7; } .d-desc { order: 8; } .d-san { order: 9; } .d-avisos { order: 10; }
   .actions-bar .btn { flex: 1 1 10rem; justify-content: center; }
 }
+
+/* ---- praderas y ubicaciones ---- */
+.pill.wait { background: #f2e2a6; color: #6b5413; }
+.ubic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.9rem; margin-top: 0.6rem; }
+.ubic-card { background: #fbf5e6; border: 1px solid var(--line); border-radius: 0.9rem; padding: 0.7rem; display: grid; gap: 0.2rem; text-align: left; align-content: start; }
+.ubic-card:hover { background: #f3ead1; }
+.ubic-card small { color: var(--muted); }
+.ubic-title { display: flex; justify-content: space-between; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.3rem; }
+.ubic-img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.7rem; }
+.hero-card .photo .ubic-img { aspect-ratio: 1; }
+.back-link { display: block; margin-bottom: 0.2rem; font-weight: 600; color: #3b6a2a; text-align: left; }
+.pick-list { display: grid; gap: 0.15rem; max-height: 14rem; overflow-y: auto; border: 1px solid var(--line); border-radius: 0.6rem; padding: 0.3rem 0.6rem; background: #fff9ec; }
+.pick-list .check { font-weight: 500; padding: 0.2rem 0; flex-wrap: wrap; } .pick-list small { margin-left: auto; }
+.fld-label { font-weight: 600; font-size: 0.93rem; display: block; margin-bottom: 0.2rem; }
+.carga { margin-top: 0.8rem; } .carga p { margin: 0.2rem 0 0.5rem; }
+.notice-card { padding: 0.6rem 0.9rem; border-left: 4px solid #d6a73c; }
+.compare-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0.7rem; } .compare-pair img { width: 100%; border-radius: 0.7rem; display: block; } .compare-pair figcaption { font-weight: 600; text-align: center; }
+.cal th, .cal td { text-align: center; padding: 0.4rem 0.3rem; } .cal td:first-child, .cal th:first-child { text-align: left; white-space: nowrap; }
+.g-pres, .g-aprov, .g-calidad { grid-column: 1 / -1; }
+.g-ubic { grid-column: 1 / -1; }
+.bottom { overflow-x: auto; } .bottom button { flex: 1 0 4.4rem; }
+
+.ubic-card .ubic-img { aspect-ratio: 16 / 8; } .ubic-card .ph-box svg { opacity: .8; }

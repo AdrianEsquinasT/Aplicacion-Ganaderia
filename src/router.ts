@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-export type Screen = 'inicio' | 'resumen' | 'animales' | 'lotes' | 'bajas' | 'reproduccion' | 'catalogo' | 'genealogia' | 'produccion' | 'sanidad' | 'estadisticas' | 'config'
-const SCREENS: Screen[] = ['inicio', 'resumen', 'animales', 'lotes', 'bajas', 'reproduccion', 'catalogo', 'genealogia', 'produccion', 'sanidad', 'estadisticas', 'config']
+export type Screen = 'inicio' | 'resumen' | 'animales' | 'lotes' | 'bajas' | 'reproduccion' | 'ubicaciones' | 'catalogo' | 'genealogia' | 'produccion' | 'sanidad' | 'estadisticas' | 'config'
+const SCREENS: Screen[] = ['inicio', 'resumen', 'animales', 'lotes', 'bajas', 'reproduccion', 'ubicaciones', 'catalogo', 'genealogia', 'produccion', 'sanidad', 'estadisticas', 'config']
 
 export interface Route {
   screen: Screen
@@ -18,6 +18,7 @@ export function go(screen: Screen, id?: string) {
   window.location.hash = `#/${screen}${id ? '/' + encodeURIComponent(id) : ''}`
 }
 export const verAnimal = (id: string) => go('animales', id)
+export const verUbicacion = (id: string) => go('ubicaciones', id)
 
 export function useRoute(): Route {
   const [r, setR] = useState<Route>(read)

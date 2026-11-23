@@ -98,6 +98,8 @@ export function AnimalForm({ i, animal, onClose, onSaved }: { i: Index; animal?:
             </div>
           )}
         </div>
+        <Field label="Collar GPS: proveedor" hint="Preparado para el futuro; aún sin conexión con el collar"><input value={a.collarProveedor ?? ''} onChange={(e) => set('collarProveedor', txt(e.target.value))} /></Field>
+        <Field label="Collar GPS: identificador"><input value={a.collarGps ?? ''} onChange={(e) => set('collarGps', txt(e.target.value))} /></Field>
         <Field label="Observaciones morfológicas" full><textarea rows={2} value={a.morfologia ?? ''} onChange={(e) => set('morfologia', txt(e.target.value))} /></Field>
         <Field label="Observaciones" full><textarea rows={2} value={a.obs ?? ''} onChange={(e) => set('obs', txt(e.target.value))} /></Field>
         <div className="full"><FormActions onCancel={onClose} /></div>

@@ -18,9 +18,11 @@ Aplicación funcional con **datos ficticios** de ejemplo. Incluye: resumen de la
 reproducción (estrategia CIDR → retirada → prostaglandina → inseminación → diagnóstico en línea temporal, historial de ciclos,
 monta natural como excepción), partos que crean el ternero y lo enlazan con madre y padre, catálogo de sementales,
 genealogía dinámica con descendencia, pesajes con gráfica, producción, sanidad con avisos, estadísticas y copia de seguridad.
+Incluye praderas y ubicaciones (ficha con datos generales, valoración del pasto y control de aprovechamiento), movimientos de animales con historial,
+calendario de pastoreo, tiempo de descanso, carga orientativa y avisos.
 Los datos se guardan en el propio dispositivo (IndexedDB).
 
-Pendiente: instalación como PWA y funcionamiento sin conexión (service worker), pruebas en iPhone real y revisión de fórmulas con la ganadera.
+Pendiente: mapa de la explotación con límites SIGPAC, integración con collares GPS, instalación como PWA y funcionamiento sin conexión (service worker), pruebas en iPhone real y revisión de fórmulas con la ganadera.
 
 ## Imágenes de ejemplo
 Los animales y sementales de ejemplo llevan ilustraciones originales de perfil (20 en `public/demo/animales/`),
