@@ -78,7 +78,7 @@ export function FormActions({ onCancel, label = 'Guardar', extra }: { onCancel: 
 
 export function Avatar({ i, a, size = 52, round }: { i: Index; a: Animal; size?: number; round?: boolean }) {
   const f = fotoAnimal(i, a)
-  const st = { width: `${size / 14}rem`, height: `${size / 14}rem`, borderRadius: round ? '50%' : '0.7rem' }
+  const st = { width: `${size / 14}rem`, height: `${size / 14}rem`, borderRadius: round ? '99rem' : '0.7rem' }
   if (f) return <img className="avatar" style={st} src={f} alt={a.name || a.crotal} />
   return (
     <span className={`avatar ph ${a.sex === 'M' ? 'male' : ''}`} style={st}>
@@ -142,7 +142,7 @@ export function ScoreBar({ valor, detalle, nombre, destacado }: { valor: number 
   return (
     <li className={`score-row ${destacado ? 'big' : ''}`} title={detalle}>
       <span>{nombre}</span>
-      <span className="bar"><i style={{ width: valor === null ? 0 : `${valor * 10}%` }} /></span>
+      <span className="bar" style={{ gridTemplateColumns: `${valor ?? 0}fr ${10 - (valor ?? 0)}fr` }}><i /></span>
       <b>{valor === null ? '—' : valor.toFixed(1).replace('.', ',')}</b>
     </li>
   )

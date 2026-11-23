@@ -61,8 +61,8 @@ export default function Produccion({ i }: { i: Index }) {
               <div><h4>Peso al nacimiento por año (kg)</h4><BarChart data={serie.map((x) => ({ label: String(x.y), value: x.s.nacimiento }))} unit="kg" color="#b8812f" dec={1} /></div>
             </div>
             <div className="cols2">
-              <div><h4>Peso medio por padre</h4>{porPadre.length === 0 ? <Empty>Sin datos</Empty> : <table className="tbl"><thead><tr><th>Padre</th><th>Hijos</th><th>Nac.</th><th>Destete</th></tr></thead><tbody>{porPadre.map((x) => <tr key={x.id}><td>{x.nombre}</td><td>{x.n}</td><td>{fmtNum(x.nacimiento, 1)}</td><td>{fmtNum(x.destete, 0)}</td></tr>)}</tbody></table>}</div>
-              <div><h4>Peso medio por madre</h4>{porMadre.length === 0 ? <Empty>Sin datos</Empty> : <table className="tbl"><thead><tr><th>Madre</th><th>Hijos</th><th>Nac.</th><th>Destete</th></tr></thead><tbody>{porMadre.map((x) => <tr key={x.id} className="click" onClick={() => verAnimal(x.id)}><td>{x.nombre}</td><td>{x.n}</td><td>{fmtNum(x.nacimiento, 1)}</td><td>{fmtNum(x.destete, 0)}</td></tr>)}</tbody></table>}</div>
+              <div><h4>Peso medio por padre</h4>{porPadre.length === 0 ? <Empty>Sin datos</Empty> : <div className="table-wrap"><table className="tbl"><thead><tr><th>Padre</th><th>Hijos</th><th>Nac.</th><th>Destete</th></tr></thead><tbody>{porPadre.map((x) => <tr key={x.id}><td>{x.nombre}</td><td>{x.n}</td><td>{fmtNum(x.nacimiento, 1)}</td><td>{fmtNum(x.destete, 0)}</td></tr>)}</tbody></table></div>}</div>
+              <div><h4>Peso medio por madre</h4>{porMadre.length === 0 ? <Empty>Sin datos</Empty> : <div className="table-wrap"><table className="tbl"><thead><tr><th>Madre</th><th>Hijos</th><th>Nac.</th><th>Destete</th></tr></thead><tbody>{porMadre.map((x) => <tr key={x.id} className="click" onClick={() => verAnimal(x.id)}><td>{x.nombre}</td><td>{x.n}</td><td>{fmtNum(x.nacimiento, 1)}</td><td>{fmtNum(x.destete, 0)}</td></tr>)}</tbody></table></div>}</div>
             </div>
           </>
         )}
