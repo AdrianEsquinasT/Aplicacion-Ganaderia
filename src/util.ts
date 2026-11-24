@@ -35,9 +35,10 @@ export function monthsBetween(a: string, b: string): number {
 
 export function ageLabel(birth: string, ref = today()): string {
   const m = monthsBetween(birth, ref)
-  if (m >= 24) return `${Math.floor(m / 12)} años`
-  if (m >= 12) return `${Math.floor(m / 12)} año${m % 12 ? ` y ${m % 12} m` : ''}`
-  return `${m} ${m === 1 ? 'mes' : 'meses'}`
+  const nb = '\u00A0' // espacio que no se parte: «5 años», «1 año y 11 m» siempre en una línea
+  if (m >= 24) return `${Math.floor(m / 12)}${nb}años`
+  if (m >= 12) return `${Math.floor(m / 12)}${nb}año${m % 12 ? `${nb}y${nb}${m % 12}${nb}m` : ''}`
+  return `${m}${nb}${m === 1 ? 'mes' : 'meses'}`
 }
 
 export function year(iso: string): number {

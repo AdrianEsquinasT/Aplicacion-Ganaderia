@@ -64,7 +64,7 @@ select, input[type=text], input[type=date], input[type=number], input[type=time]
 .chips button { padding: 4px 0.833em; border-radius: 8.251em; font-size: 0.857rem; background: #fff9ec; border: 1px solid var(--line); } .chips button.on { background: #3f6b2f; color: #fff; border-color: #3f6b2f; }
 .chip-x { display: inline-flex; align-items: center; gap: 4px; background: #fff9ec; border: 2px solid var(--line); border-radius: 8.251em; padding: 2px 4px 2px 0.833em; font-size: 0.857rem; } .chip-x button { font-size: 1.143rem; color: var(--muted); width: 1.429rem; }
 .chips-edit { display: flex; gap: 0.429rem; flex-wrap: wrap; margin-bottom: 0.714rem; }
-.tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); max-width: 46rem; margin: 0.3rem 0 0.7rem; border-bottom: 2px solid var(--line); } .tabs button { padding: 0.5em 0.35em; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; text-align: center; line-height: 1.2; display: grid; place-items: center; } .tabs button.on { color: var(--text); border-color: var(--green); }
+.tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 14rem); justify-content: start; margin: 0.3rem 0 0.7rem; border-bottom: 2px solid var(--line); } .tabs button { padding: 0.5em 0.35em; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; text-align: center; line-height: 1.2; display: grid; place-items: center; } .tabs button.on { color: var(--text); border-color: var(--green); }
 .pills { display: flex; gap: 0.429rem; flex-wrap: wrap; margin-bottom: 0.714rem; } .pills button { padding: 4px 1em; border-radius: 8.251em; background: #fff9ec; border: 1px solid var(--line); font-size: 0.857rem; } .pills button.on { background: var(--green); color: #fff; border-color: var(--green); }
 .table-wrap { overflow-x: auto; display: grid; grid-template-columns: minmax(min-content, 1fr); background:
   linear-gradient(to right, #f7f0e0 0.8rem, rgba(247, 240, 224, 0)) left top / 2.5rem auto no-repeat local,
@@ -340,3 +340,31 @@ fieldset { padding: 0.7rem 0.9rem 0.9rem; background: rgba(255, 255, 255, .35); 
   select, input[type=text], input[type=date], input[type=number], input[type=time], input:not([type]), textarea { font-size: max(1rem, 16px); }
   label.search input, label.search input:not([type]) { font-size: max(1rem, 16px); }
 }
+
+/* =====================================================================
+   Menús y desplegables: acabado final
+   ===================================================================== */
+/* menú lateral: icono y texto en dos columnas, para que una etiqueta larga quede alineada */
+.sidebar nav button { display: grid; grid-template-columns: 1.45rem minmax(0, 1fr); gap: 0.75rem; align-items: center; text-align: left; line-height: 1.2; }
+.sidebar nav button > svg { justify-self: center; }
+/* menú «Más»: si queda un botón solo en la última fila, ocupa el ancho completo */
+.menu-grid > button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* tablas: las cifras con unidad («620 kg») no se parten en dos líneas */
+.tbl td { min-width: 4.4rem; } .tbl td:first-child { min-width: 0; } .tbl td:has(> .x) { min-width: 0; }
+/* cabeceras de tarjeta: el selector y el botón de acción van en una sola fila cuando caben */
+@media (min-width: 40em) { .head > .inline { flex-wrap: nowrap; } }
+/* casillas dentro de un formulario: alineadas con la fila de campos vecina */
+.form-grid > .check { align-self: end; }
+.row3 > .fld.full { grid-column: 1 / -1; }
+/* respuesta visual: foco con teclado, pulsación y transiciones suaves */
+button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid #e6c27e; outline-offset: 2px; border-radius: 0.5em; }
+.sidebar nav button:focus-visible, .bottom button:focus-visible { outline-color: #fff6d6; outline-offset: -3px; }
+.btn, .tabs button, .chips button, .pills button, .row, .ubic-card, .sem-card, .d-quick button, .menu-grid button, .sidebar nav button, .bottom button, .more > summary, .chip-link, .hero-icons button {
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .1s ease, box-shadow .15s ease; }
+.btn:active, .d-quick button:active, .menu-grid button:active, .ubic-card:active, .sem-card:active, .chips button:active, .row:active { transform: scale(.98); }
+.tabs button:hover:not(.on) { color: var(--text); background: rgba(79, 122, 58, .08); }
+.chips button:hover:not(.on), .pills button:hover:not(.on) { background: #f3e9cf; }
+.bottom button:not(.on):active, .sidebar nav button:not(.active):active { background: rgba(255, 255, 255, .14); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+/* botones junto a campos: misma altura que los campos */
+.inline > .btn, .toolbar > .btn, .toolbar.filters .btn { min-height: var(--campo-alto); }

@@ -205,7 +205,7 @@ export function CicloForm({ i, vaca, ciclo, onClose }: { i: Index; vaca: Animal;
             <Field label="Hora"><input type="time" value={pg?.hora ?? ''} onChange={(e) => pg && set({ pg: { ...pg, hora: txt(e.target.value) } })} disabled={!pg} /></Field>
             <Field label="Producto"><input value={pg?.producto ?? ''} onChange={(e) => pg && set({ pg: { ...pg, producto: txt(e.target.value) } })} disabled={!pg} /></Field>
             <Field label="Dosis"><input value={pg?.dosis ?? ''} onChange={(e) => pg && set({ pg: { ...pg, dosis: txt(e.target.value) } })} disabled={!pg} /></Field>
-            <Field label="Observaciones"><input value={pg?.obs ?? ''} onChange={(e) => pg && set({ pg: { ...pg, obs: txt(e.target.value) } })} disabled={!pg} /></Field>
+            <Field label="Observaciones" full><input value={pg?.obs ?? ''} onChange={(e) => pg && set({ pg: { ...pg, obs: txt(e.target.value) } })} disabled={!pg} /></Field>
           </div>
         </fieldset>
 
@@ -216,8 +216,8 @@ export function CicloForm({ i, vaca, ciclo, onClose }: { i: Index; vaca: Animal;
               <Field label="Hora"><input type="time" value={ia?.hora ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, hora: txt(e.target.value) } })} /></Field>
               <Field label="Semental del catálogo"><select value={ia?.sementalId ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, sementalId: txt(e.target.value) } })}><option value="">Sin indicar</option>{i.state.sementales.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>
               <Field label="Tipo de semen"><input value={ia?.tipoSemen ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, tipoSemen: txt(e.target.value) } })} placeholder="Convencional / sexado…" /></Field>
-              <Field label="Técnico / veterinario"><input value={ia?.tecnico ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, tecnico: txt(e.target.value) } })} /></Field>
-              <Field label="Observaciones"><input value={ia?.obs ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, obs: txt(e.target.value) } })} /></Field>
+              <Field label="Técnico / veterinario" full><input value={ia?.tecnico ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, tecnico: txt(e.target.value) } })} /></Field>
+              <Field label="Observaciones" full><input value={ia?.obs ?? ''} disabled={!ia} onChange={(e) => ia && set({ ia: { ...ia, obs: txt(e.target.value) } })} /></Field>
             </div>
           </fieldset>
         ) : (
@@ -226,7 +226,7 @@ export function CicloForm({ i, vaca, ciclo, onClose }: { i: Index; vaca: Animal;
               <Field label="Toro utilizado"><select value={mo?.toroId ?? ''} onChange={(e) => set({ monta: { ...mo, toroId: txt(e.target.value) } })}><option value="">Seleccionar…</option>{toros.map((t) => <option key={t.id} value={t.id}>{etiqueta(i, t)}</option>)}</select></Field>
               <Field label="Entrada con el toro"><input type="date" value={mo?.entrada ?? ''} onChange={(e) => set({ monta: { ...mo, entrada: txt(e.target.value) } })} /></Field>
               <Field label="Salida del toro"><input type="date" value={mo?.salida ?? ''} onChange={(e) => set({ monta: { ...mo, salida: txt(e.target.value) } })} /></Field>
-              <Field label="Observaciones"><input value={mo?.obs ?? ''} onChange={(e) => set({ monta: { ...mo, obs: txt(e.target.value) } })} /></Field>
+              <Field label="Observaciones" full><input value={mo?.obs ?? ''} onChange={(e) => set({ monta: { ...mo, obs: txt(e.target.value) } })} /></Field>
             </div>
           </fieldset>
         )}
@@ -236,7 +236,7 @@ export function CicloForm({ i, vaca, ciclo, onClose }: { i: Index; vaca: Animal;
             <Field label="Fecha"><input type="date" value={dg?.fecha ?? ''} onChange={(e) => set({ diag: { resultado: dg?.resultado ?? 'Gestante', ...dg, fecha: txt(e.target.value) } })} /></Field>
             <Field label="Resultado"><select value={dg?.resultado ?? ''} onChange={(e) => set({ diag: e.target.value ? { ...dg, resultado: e.target.value as 'Gestante' | 'Vacía' | 'Dudosa' } : undefined })}><option value="">Pendiente</option><option>Gestante</option><option>Vacía</option><option>Dudosa</option></select></Field>
             <Field label="Método"><input value={dg?.metodo ?? ''} disabled={!dg} placeholder="Ecografía / palpación…" onChange={(e) => dg && set({ diag: { ...dg, metodo: txt(e.target.value) } })} /></Field>
-            <Field label="Observaciones"><input value={dg?.obs ?? ''} disabled={!dg} onChange={(e) => dg && set({ diag: { ...dg, obs: txt(e.target.value) } })} /></Field>
+            <Field label="Observaciones" full><input value={dg?.obs ?? ''} disabled={!dg} onChange={(e) => dg && set({ diag: { ...dg, obs: txt(e.target.value) } })} /></Field>
           </div>
         </fieldset>
         <Field label="Aborto (fecha, si ocurre)"><input type="date" value={c.aborto?.fecha ?? ''} onChange={(e) => set({ aborto: e.target.value ? { fecha: e.target.value } : undefined })} /></Field>
